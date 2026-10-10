@@ -23,13 +23,16 @@ export const DOCUMENT_REFERENCE_PATTERNS: readonly NamedPattern[] = [
   },
   {
     rule: 'decision-id',
-    description: 'cites a design decision id',
-    regex: /\bD-\d{3}\b/u,
+    description: 'cites a design decision or open question id',
+    // Owner decisions are three digits (D-151); decisions local to one document carry a family
+    // name (D-UI-4, D-PIPE-15); open questions are two digits (Q-02). Shorter or longer bare
+    // numbers such as D-15 or D-1234 are ordinary version or build labels and pass.
+    regex: /\b(?:D-(?:\d{3}|[A-Z]+-\d+)|Q-\d{2})\b/u,
   },
   {
     rule: 'requirement-id',
-    description: 'cites a requirement or design id',
-    regex: /\b(?:FR|NFR|ARCH|IT|OI)-[A-Z0-9-]+\b/u,
+    description: 'cites a requirement, test, open issue or design id',
+    regex: /\b(?:FR|NFR|ARCH|IT|OI|QA|NET|DATA|[AN]-OI)-(?:[A-Z]+-)*\d+[a-z]?\b/u,
   },
   {
     rule: 'numbered-document',
