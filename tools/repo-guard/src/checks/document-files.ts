@@ -15,9 +15,11 @@ function isDocument(path: string): boolean {
 
 const ID = 'document-files';
 
+/** Private documents must never be committed, so no folder may be exempted from this check. */
 export const documentFilesCheck: FileCheck = {
   id: ID,
   rules: [RULE],
+  waivable: false,
   check(file) {
     if (!isDocument(file.path) || basename(file.path) === CONTRIBUTOR_README) return [];
     return [

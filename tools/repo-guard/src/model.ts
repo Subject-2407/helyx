@@ -33,6 +33,11 @@ export interface Finding {
 export interface CheckInfo {
   readonly id: string;
   readonly rules: readonly string[];
+  /**
+   * False for a check no allowlist entry may switch off, in any folder. Leaving it out means the
+   * check can be waived for the paths an entry names.
+   */
+  readonly waivable?: boolean;
 }
 
 export interface FileCheck extends CheckInfo {

@@ -180,6 +180,12 @@ export const DOCUMENT_PATHS: readonly string[] = [
   'README.md.pdf',
 ];
 
+/** Document files inside the folders where the allowlist waives the reference and term scans. */
+export const GUARD_FOLDER_DOCUMENT_PATHS: readonly string[] = [
+  'tools/repo-guard/test/fixtures/design-notes.md',
+  'tools/repo-guard/src/patterns/plan.pdf',
+];
+
 /** Files that only look like documents. */
 export const NON_DOCUMENT_PATHS: readonly string[] = [
   'src/index.ts',

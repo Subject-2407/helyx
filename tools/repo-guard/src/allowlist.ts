@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { matchesGlob } from './glob';
 import type { CheckInfo, Finding } from './model';
 
-/** Matches any check or any rule. */
+/** Matches any rule of the one check an entry names. */
 export const WILDCARD = '*';
 
 const AllowlistEntrySchema = z.strictObject({
@@ -20,25 +20,24 @@ const AllowlistFileSchema = z.strictObject({
 export type AllowlistEntry = Readonly<z.infer<typeof AllowlistEntrySchema>>;
 export type Allowlist = readonly AllowlistEntry[];
 
-function knownRules(
-  entry: AllowlistEntry,
-  checks: readonly CheckInfo[],
-): readonly string[] | undefined {
-  if (entry.check === WILDCARD) return checks.flatMap((check) => check.rules);
-  return checks.find((check) => check.id === entry.check)?.rules;
-}
-
+/**
+ * Every entry names exactly one real check, so a broad entry cannot quietly switch off a check
+ * it was not written for, and never a check that must hold everywhere.
+ */
 function validateEntry(entry: AllowlistEntry, checks: readonly CheckInfo[]): void {
-  const rules = knownRules(entry, checks);
-  if (rules === undefined) {
-    throw new Error(
-      `Invalid allowlist: entry for "${entry.path}" names unknown check "${entry.check}"`,
-    );
+  const where = `Invalid allowlist: entry for "${entry.path}"`;
+  if (entry.check === WILDCARD) {
+    throw new Error(`${where} must name one check, not "${WILDCARD}"`);
   }
-  if (entry.pattern !== WILDCARD && !rules.includes(entry.pattern)) {
-    throw new Error(
-      `Invalid allowlist: entry for "${entry.path}" names unknown rule "${entry.pattern}" of check "${entry.check}"`,
-    );
+  const check = checks.find((candidate) => candidate.id === entry.check);
+  if (check === undefined) {
+    throw new Error(`${where} names unknown check "${entry.check}"`);
+  }
+  if (check.waivable === false) {
+    throw new Error(`${where} names the check "${entry.check}", which cannot be waived`);
+  }
+  if (entry.pattern !== WILDCARD && !check.rules.includes(entry.pattern)) {
+    throw new Error(`${where} names unknown rule "${entry.pattern}" of check "${entry.check}"`);
   }
 }
 
@@ -54,7 +53,7 @@ export function parseAllowlist(raw: unknown, checks: readonly CheckInfo[]): Allo
 
 function covers(entry: AllowlistEntry, finding: Finding): boolean {
   return (
-    (entry.check === WILDCARD || entry.check === finding.check) &&
+    entry.check === finding.check &&
     (entry.pattern === WILDCARD || entry.pattern === finding.rule) &&
     matchesGlob(finding.file, entry.path)
   );

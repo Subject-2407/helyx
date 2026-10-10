@@ -2,13 +2,25 @@
   "entries": [
     {
       "path": "tools/repo-guard/src/patterns/**",
-      "check": "*",
+      "check": "document-references",
+      "pattern": "*",
+      "reason": "The guard's own pattern and term definitions spell out what they look for."
+    },
+    {
+      "path": "tools/repo-guard/src/patterns/**",
+      "check": "secret-terms",
       "pattern": "*",
       "reason": "The guard's own pattern and term definitions spell out what they look for."
     },
     {
       "path": "tools/repo-guard/test/fixtures/**",
-      "check": "*",
+      "check": "document-references",
+      "pattern": "*",
+      "reason": "Sample inputs the guard's tests must see rejected."
+    },
+    {
+      "path": "tools/repo-guard/test/fixtures/**",
+      "check": "secret-terms",
       "pattern": "*",
       "reason": "Sample inputs the guard's tests must see rejected."
     }
