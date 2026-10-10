@@ -1,9 +1,14 @@
 const CLIENT_SOURCES = 'apps/client/src';
 
+/**
+ * Any path into the listener folder, except its public loader (`listener/load`, with or without
+ * a script extension). The loader is tiny, holds no secret text and ships in the public build:
+ * it is what fetches the separate listener bundle at runtime, so public code imports it directly.
+ */
 const listenerPattern = {
-  regex: '(^|/)listener(/|$)',
+  regex: '(^|/)listener(/(?!load(\\.[cm]?[jt]s)?$)|$)',
   message:
-    'Listener code is a separate bundle: load it only through a dynamic import() from its entry point.',
+    'Listener code is a separate bundle: outside its folder only the public loader may be imported statically; anything else is reached through a dynamic import().',
 };
 
 const phaserPattern = {

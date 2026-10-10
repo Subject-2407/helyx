@@ -5,7 +5,9 @@ import { SOLID_THRESHOLDS } from '../src/eslint/thresholds.js';
 
 const repoRoot = fileURLToPath(new URL('../../../', import.meta.url));
 
-// Type-aware linting spins up a TypeScript program per tsconfig, which takes a few seconds.
+// Type-aware linting builds a TypeScript program the first time it sees each file, which takes
+// a few seconds. That cost is paid once, up front, so each test only lints warm files.
+const WARM_UP_TIMEOUT_MS = 120_000;
 const LINT_TIMEOUT_MS = 60_000;
 
 // The linted files are virtual: they never exist on disk, so no workspace tsconfig lists them.
@@ -14,22 +16,20 @@ const LINT_TIMEOUT_MS = 60_000;
 const VIRTUAL_FILES = [
   'packages/shared/src/x.ts',
   'apps/server/src/x.ts',
+  'apps/client/src/x.ts',
   'apps/client/src/ui/x.tsx',
   'apps/client/src/scenes/x.ts',
   'apps/client/src/listener/panel/x.ts',
 ];
 
-let eslint: ESLint;
-
-beforeAll(() => {
-  eslint = new ESLint({
-    cwd: repoRoot,
-    overrideConfig: {
-      languageOptions: {
-        parserOptions: { projectService: { allowDefaultProject: VIRTUAL_FILES } },
-      },
+/** One linter for the repository config, shared by every test so its parser state is reused. */
+const eslint = new ESLint({
+  cwd: repoRoot,
+  overrideConfig: {
+    languageOptions: {
+      parserOptions: { projectService: { allowDefaultProject: VIRTUAL_FILES } },
     },
-  });
+  },
 });
 
 async function lint(relativePath: string, code: string): Promise<Linter.LintMessage[]> {
@@ -43,6 +43,12 @@ async function lint(relativePath: string, code: string): Promise<Linter.LintMess
   }
   return result.messages;
 }
+
+beforeAll(async () => {
+  for (const file of VIRTUAL_FILES) {
+    await lint(file, 'export {};\n');
+  }
+}, WARM_UP_TIMEOUT_MS);
 
 function byRule(messages: Linter.LintMessage[], ruleId: string): Linter.LintMessage[] {
   return messages.filter((message) => message.ruleId === ruleId);
@@ -93,160 +99,158 @@ function branchyFunction(decisionPoints: number): string {
   ].join('\n');
 }
 
-describe('lint rules', () => {
-  it(
-    'rejects Math.random and Date.now inside the pure shared package',
-    async () => {
-      const messages = await lint('packages/shared/src/x.ts', impureCode);
-      const properties = byRule(messages, 'no-restricted-properties');
-      const globals = byRule(messages, 'no-restricted-globals');
+/** One side-effect import per line, so a report's line number says which import it was. */
+function importLines(specifiers: readonly string[]): string {
+  return `${specifiers.map((specifier) => `import '${specifier}';`).join('\n')}\n`;
+}
 
-      expect(properties.map((m) => m.severity)).toEqual([ERROR, ERROR]);
-      expect(properties.map((m) => m.message).join('\n')).toMatch(/Math\.random/);
-      expect(properties.map((m) => m.message).join('\n')).toMatch(/Date\.now/);
-      expect(globals.length).toBeGreaterThan(0);
-      expect(globals.every((m) => m.severity === ERROR)).toBe(true);
-    },
-    LINT_TIMEOUT_MS,
-  );
+/** Public client files outside the listener folder, with the relative path to that folder. */
+const PUBLIC_CLIENT_FILES = [
+  { file: 'apps/client/src/x.ts', listener: './listener' },
+  { file: 'apps/client/src/scenes/x.ts', listener: '../listener' },
+  { file: 'apps/client/src/ui/x.tsx', listener: '../listener' },
+] as const;
 
-  it(
-    'allows the same code outside the shared package',
-    async () => {
-      const messages = await lint('apps/server/src/x.ts', impureCode);
+const LOADER_IMPORTS = ['load', 'load.js', 'load.ts'];
 
-      expect(byRule(messages, 'no-restricted-properties')).toEqual([]);
-      expect(byRule(messages, 'no-restricted-globals')).toEqual([]);
-    },
-    LINT_TIMEOUT_MS,
-  );
+const OTHER_LISTENER_IMPORTS = [
+  '',
+  '/index',
+  '/host-shim',
+  '/panel/load',
+  '/loader',
+  '/load/extra',
+];
 
-  it(
-    'rejects timers reached through globalThis inside the shared package',
-    async () => {
-      const code =
-        'export function later(): void {\n  globalThis.setTimeout(() => undefined, 1);\n}\n';
-      const messages = await lint('packages/shared/src/x.ts', code);
+describe('lint rules', { timeout: LINT_TIMEOUT_MS }, () => {
+  it('rejects Math.random and Date.now inside the pure shared package', async () => {
+    const messages = await lint('packages/shared/src/x.ts', impureCode);
+    const properties = byRule(messages, 'no-restricted-properties');
+    const globals = byRule(messages, 'no-restricted-globals');
 
-      expect(byRule(messages, 'no-restricted-properties').map((m) => m.severity)).toEqual([ERROR]);
-    },
-    LINT_TIMEOUT_MS,
-  );
+    expect(properties.map((m) => m.severity)).toEqual([ERROR, ERROR]);
+    expect(properties.map((m) => m.message).join('\n')).toMatch(/Math\.random/);
+    expect(properties.map((m) => m.message).join('\n')).toMatch(/Date\.now/);
+    expect(globals.length).toBeGreaterThan(0);
+    expect(globals.every((m) => m.severity === ERROR)).toBe(true);
+  });
 
-  it(
-    'rejects an explicit any',
-    async () => {
-      const code = 'export function id(value: any): unknown {\n  return value;\n}\n';
-      const messages = await lint('apps/server/src/x.ts', code);
+  it('allows the same code outside the shared package', async () => {
+    const messages = await lint('apps/server/src/x.ts', impureCode);
 
-      expect(byRule(messages, '@typescript-eslint/no-explicit-any').map((m) => m.severity)).toEqual(
-        [ERROR],
-      );
-    },
-    LINT_TIMEOUT_MS,
-  );
+    expect(byRule(messages, 'no-restricted-properties')).toEqual([]);
+    expect(byRule(messages, 'no-restricted-globals')).toEqual([]);
+  });
 
-  it(
-    'warns when a function grows past the length limit',
-    async () => {
-      // Signature, accumulator, return and closing brace add four lines to the body.
-      const over = longFunction(SOLID_THRESHOLDS.maxLinesPerFunction - 3);
-      const atLimit = longFunction(SOLID_THRESHOLDS.maxLinesPerFunction - 4);
+  it('rejects timers reached through globalThis inside the shared package', async () => {
+    const code =
+      'export function later(): void {\n  globalThis.setTimeout(() => undefined, 1);\n}\n';
+    const messages = await lint('packages/shared/src/x.ts', code);
 
-      const overMessages = byRule(
-        await lint('apps/server/src/x.ts', over),
-        'max-lines-per-function',
-      );
-      const atLimitMessages = byRule(
-        await lint('apps/server/src/x.ts', atLimit),
-        'max-lines-per-function',
-      );
+    expect(byRule(messages, 'no-restricted-properties').map((m) => m.severity)).toEqual([ERROR]);
+  });
 
-      expect(SOLID_THRESHOLDS.maxLinesPerFunction).toBe(60);
-      expect(overMessages.map((m) => m.severity)).toEqual([WARN]);
-      expect(atLimitMessages).toEqual([]);
-    },
-    LINT_TIMEOUT_MS,
-  );
+  it('rejects an explicit any', async () => {
+    const code = 'export function id(value: any): unknown {\n  return value;\n}\n';
+    const messages = await lint('apps/server/src/x.ts', code);
 
-  it(
-    'warns when a file grows past the length limit, not counting blanks and comments',
-    async () => {
-      const over = longFile(SOLID_THRESHOLDS.maxLinesPerFile + 1);
-      const atLimit = longFile(SOLID_THRESHOLDS.maxLinesPerFile);
+    expect(byRule(messages, '@typescript-eslint/no-explicit-any').map((m) => m.severity)).toEqual([
+      ERROR,
+    ]);
+  });
 
-      const overMessages = byRule(await lint('apps/server/src/x.ts', over), 'max-lines');
-      const atLimitMessages = byRule(await lint('apps/server/src/x.ts', atLimit), 'max-lines');
+  it('warns when a function grows past the length limit', async () => {
+    // Signature, accumulator, return and closing brace add four lines to the body.
+    const over = longFunction(SOLID_THRESHOLDS.maxLinesPerFunction - 3);
+    const atLimit = longFunction(SOLID_THRESHOLDS.maxLinesPerFunction - 4);
 
-      expect(SOLID_THRESHOLDS.maxLinesPerFile).toBe(400);
-      expect(overMessages.map((m) => m.severity)).toEqual([WARN]);
-      expect(atLimitMessages).toEqual([]);
-    },
-    LINT_TIMEOUT_MS,
-  );
+    const overMessages = byRule(await lint('apps/server/src/x.ts', over), 'max-lines-per-function');
+    const atLimitMessages = byRule(
+      await lint('apps/server/src/x.ts', atLimit),
+      'max-lines-per-function',
+    );
 
-  it(
-    'warns when cyclomatic complexity passes the limit',
-    async () => {
-      // A function starts at complexity 1; each if adds one.
-      const over = branchyFunction(SOLID_THRESHOLDS.maxComplexity);
-      const atLimit = branchyFunction(SOLID_THRESHOLDS.maxComplexity - 1);
+    expect(SOLID_THRESHOLDS.maxLinesPerFunction).toBe(60);
+    expect(overMessages.map((m) => m.severity)).toEqual([WARN]);
+    expect(atLimitMessages).toEqual([]);
+  });
 
-      const overMessages = byRule(await lint('apps/server/src/x.ts', over), 'complexity');
-      const atLimitMessages = byRule(await lint('apps/server/src/x.ts', atLimit), 'complexity');
+  it('warns when a file grows past the length limit, not counting blanks and comments', async () => {
+    const over = longFile(SOLID_THRESHOLDS.maxLinesPerFile + 1);
+    const atLimit = longFile(SOLID_THRESHOLDS.maxLinesPerFile);
 
-      expect(SOLID_THRESHOLDS.maxComplexity).toBe(12);
-      expect(overMessages.map((m) => m.severity)).toEqual([WARN]);
-      expect(atLimitMessages).toEqual([]);
-    },
-    LINT_TIMEOUT_MS,
-  );
+    const overMessages = byRule(await lint('apps/server/src/x.ts', over), 'max-lines');
+    const atLimitMessages = byRule(await lint('apps/server/src/x.ts', atLimit), 'max-lines');
 
-  it(
-    'rejects phaser inside the react overlay',
-    async () => {
-      const code = "import Phaser from 'phaser';\n\nexport const game = Phaser;\n";
-      const restricted = byRule(
-        await lint('apps/client/src/ui/x.tsx', code),
-        'no-restricted-imports',
-      );
+    expect(SOLID_THRESHOLDS.maxLinesPerFile).toBe(400);
+    expect(overMessages.map((m) => m.severity)).toEqual([WARN]);
+    expect(atLimitMessages).toEqual([]);
+  });
 
-      expect(restricted.map((m) => m.severity)).toEqual([ERROR]);
-      expect(restricted[0]?.message).toMatch(/Phaser/);
-    },
-    LINT_TIMEOUT_MS,
-  );
+  it('warns when cyclomatic complexity passes the limit', async () => {
+    // A function starts at complexity 1; each if adds one.
+    const over = branchyFunction(SOLID_THRESHOLDS.maxComplexity);
+    const atLimit = branchyFunction(SOLID_THRESHOLDS.maxComplexity - 1);
 
-  it(
-    'rejects react inside scenes',
-    async () => {
-      const code = "import { useState } from 'react';\n\nexport const hook = useState;\n";
-      const restricted = byRule(
-        await lint('apps/client/src/scenes/x.ts', code),
-        'no-restricted-imports',
-      );
+    const overMessages = byRule(await lint('apps/server/src/x.ts', over), 'complexity');
+    const atLimitMessages = byRule(await lint('apps/server/src/x.ts', atLimit), 'complexity');
 
-      expect(restricted.map((m) => m.severity)).toEqual([ERROR]);
-      expect(restricted[0]?.message).toMatch(/React/);
-    },
-    LINT_TIMEOUT_MS,
-  );
+    expect(SOLID_THRESHOLDS.maxComplexity).toBe(12);
+    expect(overMessages.map((m) => m.severity)).toEqual([WARN]);
+    expect(atLimitMessages).toEqual([]);
+  });
 
-  it(
-    'rejects static imports of listener code from the rest of the client',
-    async () => {
-      const code = "import { load } from '../listener/load';\n\nexport const entry = load;\n";
-      const inScenes = await lint('apps/client/src/scenes/x.ts', code);
-      const inUi = await lint('apps/client/src/ui/x.tsx', code);
-      const inListener = await lint(
-        'apps/client/src/listener/panel/x.ts',
-        "import { load } from '../load';\n\nexport const entry = load;\n",
-      );
+  it('rejects phaser inside the react overlay', async () => {
+    const code = "import Phaser from 'phaser';\n\nexport const game = Phaser;\n";
+    const restricted = byRule(
+      await lint('apps/client/src/ui/x.tsx', code),
+      'no-restricted-imports',
+    );
 
-      expect(byRule(inScenes, 'no-restricted-imports').map((m) => m.severity)).toEqual([ERROR]);
-      expect(byRule(inUi, 'no-restricted-imports').map((m) => m.severity)).toEqual([ERROR]);
-      expect(byRule(inListener, 'no-restricted-imports')).toEqual([]);
-    },
-    LINT_TIMEOUT_MS,
-  );
+    expect(restricted.map((m) => m.severity)).toEqual([ERROR]);
+    expect(restricted[0]?.message).toMatch(/Phaser/);
+  });
+
+  it('rejects react inside scenes', async () => {
+    const code = "import { useState } from 'react';\n\nexport const hook = useState;\n";
+    const restricted = byRule(
+      await lint('apps/client/src/scenes/x.ts', code),
+      'no-restricted-imports',
+    );
+
+    expect(restricted.map((m) => m.severity)).toEqual([ERROR]);
+    expect(restricted[0]?.message).toMatch(/React/);
+  });
+
+  it('allows public client code to import the listener loader statically', async () => {
+    for (const { file, listener } of PUBLIC_CLIENT_FILES) {
+      const code = importLines(LOADER_IMPORTS.map((name) => `${listener}/${name}`));
+      const restricted = byRule(await lint(file, code), 'no-restricted-imports');
+
+      expect(restricted, file).toEqual([]);
+    }
+  });
+
+  it('rejects static imports of any other listener path from public client code', async () => {
+    for (const { file, listener } of PUBLIC_CLIENT_FILES) {
+      const code = importLines(OTHER_LISTENER_IMPORTS.map((rest) => `${listener}${rest}`));
+      const restricted = byRule(await lint(file, code), 'no-restricted-imports');
+
+      expect(
+        restricted.map((m) => [m.line, m.severity]),
+        file,
+      ).toEqual(OTHER_LISTENER_IMPORTS.map((_, index) => [index + 1, ERROR]));
+      expect(restricted[0]?.message).toMatch(/dynamic import/);
+    }
+  });
+
+  it('lets listener code import its own folder', async () => {
+    const code = importLines(['../load', '../index', '../host-shim', './view']);
+    const restricted = byRule(
+      await lint('apps/client/src/listener/panel/x.ts', code),
+      'no-restricted-imports',
+    );
+
+    expect(restricted).toEqual([]);
+  });
 });
