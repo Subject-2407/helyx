@@ -3,6 +3,7 @@ node_modules
 **/node_modules
 **/dist
 **/dist-listener
+**/dist-e2e
 .turbo
 **/.turbo
 coverage

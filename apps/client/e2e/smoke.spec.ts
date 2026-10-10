@@ -8,6 +8,9 @@ interface CanvasSize {
   cssHeight: number;
 }
 
+/** The first load of the engine bundle can take several seconds in a cold browser. */
+const FIRST_LOAD_TIMEOUT_MS = 15_000;
+
 function collectErrors(page: Page): string[] {
   const errors: string[] = [];
   page.on('console', (message) => {
@@ -43,7 +46,7 @@ test('loads a single blank canvas at the internal resolution without errors', as
   const errors = collectErrors(page);
 
   await page.goto('/');
-  await expect(page.locator('canvas')).toHaveCount(1);
+  await expect(page.locator('canvas')).toHaveCount(1, { timeout: FIRST_LOAD_TIMEOUT_MS });
 
   const size = await canvasSize(page);
   expect(size.backingWidth).toBe(DISPLAY.WIDTH);
@@ -62,7 +65,9 @@ test('keeps whole-number scaling when the window is resized', async ({ page }) =
 
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
-  await expect.poll(async () => displayedZoom(await canvasSize(page))).toBe(2);
+  await expect
+    .poll(async () => displayedZoom(await canvasSize(page)), { timeout: FIRST_LOAD_TIMEOUT_MS })
+    .toBe(2);
 
   await page.setViewportSize({ width: 1920, height: 1080 });
   await expect.poll(async () => displayedZoom(await canvasSize(page))).toBe(4);
