@@ -11,19 +11,20 @@ const PREFIX = anyCase('re');
 const STEM = anyCase('express');
 
 /**
- * The hidden-lore terms. The rebirth term needs a word start (or a camelCase hump) before it,
- * so ordinary English such as "values are expressed" is not mistaken for it.
+ * The secret terms, under neutral rule ids so the guard's output says nothing about them. The
+ * second term needs a word start (or a camelCase hump) before it, so ordinary English such as
+ * "values are expressed" is not mistaken for it.
  */
 export const SECRET_TERM_PATTERNS: readonly NamedPattern[] = [
-  { rule: 'term-awakened', description: DESCRIPTION, regex: /waker/iu },
+  { rule: 'secret-term-1', description: DESCRIPTION, regex: /waker/iu },
   {
-    rule: 'term-rebirth',
+    rule: 'secret-term-2',
     description: DESCRIPTION,
     regex: new RegExp(`(?<![A-Za-z])${PREFIX}[-_ ]?${STEM}|(?<=[a-z])R[eE][-_ ]?${STEM}`, 'u'),
   },
-  { rule: 'term-thread-of', description: DESCRIPTION, regex: /thread_of/iu },
+  { rule: 'secret-term-3', description: DESCRIPTION, regex: /thread_of/iu },
   {
-    rule: 'term-thread-turning',
+    rule: 'secret-term-4',
     description: DESCRIPTION,
     regex: /turning\s+of\s+the\s+thread/iu,
   },

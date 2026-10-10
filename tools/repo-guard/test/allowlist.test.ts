@@ -9,13 +9,13 @@ const CHECKS = [...FILE_CHECKS, ...MESSAGE_CHECKS];
 const entry = {
   path: 'tools/x/**',
   check: 'secret-terms',
-  pattern: 'term-awakened',
+  pattern: 'secret-term-1',
   reason: 'test',
 };
 
 const finding: Finding = {
   check: 'secret-terms',
-  rule: 'term-awakened',
+  rule: 'secret-term-1',
   file: 'tools/x/a.ts',
   line: 1,
   message: 'm',
@@ -45,8 +45,8 @@ describe('allowlist', () => {
 
   it.each([
     ['another path', { ...finding, file: 'tools/y/a.ts' }],
-    ['another check', { ...finding, check: 'document-references', rule: 'term-awakened' }],
-    ['another rule', { ...finding, rule: 'term-thread-of' }],
+    ['another check', { ...finding, check: 'document-references', rule: 'secret-term-1' }],
+    ['another rule', { ...finding, rule: 'secret-term-3' }],
   ])('does not cover %s', (_label, other) => {
     const allowlist = parseAllowlist({ entries: [entry] }, CHECKS);
     expect(isAllowed(other, allowlist)).toBe(false);

@@ -109,7 +109,7 @@ describe('guard commands', () => {
   it('formats a finding with file, line and rule in plain words', () => {
     const text = formatFinding({
       check: 'secret-terms',
-      rule: 'term-awakened',
+      rule: 'secret-term-1',
       file: 'src/a.ts',
       line: 3,
       message: 'contains a hidden term',
@@ -117,7 +117,7 @@ describe('guard commands', () => {
     });
     expect(text).toContain('src/a.ts:3');
     expect(text).toContain('contains a hidden term');
-    expect(text).toContain('secret-terms/term-awakened');
+    expect(text).toContain('secret-terms/secret-term-1');
     expect(text).toContain('"abc"');
   });
 });

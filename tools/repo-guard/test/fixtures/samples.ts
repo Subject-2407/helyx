@@ -52,17 +52,17 @@ export const REFERENCE_NEAR_MISSES: readonly string[] = [
 
 /** Lines that contain a secret term. */
 export const SECRET_HITS: readonly RuleSample[] = [
-  { rule: 'term-awakened', text: 'const waker = spawn();' },
-  { rule: 'term-awakened', text: "const id = 'TITLE_WAKER';" },
-  { rule: 'term-awakened', text: 'the Wakers gather' },
-  { rule: 'term-rebirth', text: 'after Re-expression the soul returns' },
-  { rule: 'term-rebirth', text: "const kind = 're_express';" },
-  { rule: 'term-rebirth', text: 'reexpress()' },
-  { rule: 'term-rebirth', text: 'function onReExpress() {}' },
-  { rule: 'term-rebirth', text: 'RE EXPRESS' },
-  { rule: 'term-thread-of', text: "const key = 'quest_thread_of_fate';" },
-  { rule: 'term-thread-turning', text: 'before The Turning of the Thread' },
-  { rule: 'term-thread-turning', text: 'turning  of\tthe thread' },
+  { rule: 'secret-term-1', text: 'const waker = spawn();' },
+  { rule: 'secret-term-1', text: "const id = 'TITLE_WAKER';" },
+  { rule: 'secret-term-1', text: 'const Wakers = [];' },
+  { rule: 'secret-term-2', text: 'Re-expression' },
+  { rule: 'secret-term-2', text: "const kind = 're_express';" },
+  { rule: 'secret-term-2', text: 'reexpress()' },
+  { rule: 'secret-term-2', text: 'function onReExpress() {}' },
+  { rule: 'secret-term-2', text: 'RE EXPRESS' },
+  { rule: 'secret-term-3', text: "const key = 'x_thread_of_y';" },
+  { rule: 'secret-term-4', text: 'Turning of the Thread' },
+  { rule: 'secret-term-4', text: 'turning  of\tthe thread' },
 ];
 
 /** Ordinary words that must not be mistaken for a secret term. */

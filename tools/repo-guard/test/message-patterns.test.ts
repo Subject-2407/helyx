@@ -15,7 +15,7 @@ describe('commit message pattern checks', () => {
       source,
       text: `feat: x\n\n${MESSAGE_SECRET}`,
     });
-    expect(findings).toMatchObject([{ file: source, line: 3, rule: 'term-awakened' }]);
+    expect(findings).toMatchObject([{ file: source, line: 3, rule: 'secret-term-1' }]);
   });
 
   it('ignores git comment lines', () => {

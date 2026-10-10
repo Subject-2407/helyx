@@ -29,7 +29,7 @@ describe('secret terms check', () => {
   it('reports a secret term in a file path without a line number', () => {
     const findings = secretTermsCheck.check(toSourceFile(SECRET_PATH, 'export {};'));
     expect(findings).toHaveLength(1);
-    expect(findings[0]).toMatchObject({ file: SECRET_PATH, rule: 'term-awakened' });
+    expect(findings[0]).toMatchObject({ file: SECRET_PATH, rule: 'secret-term-1' });
     expect(findings[0]?.line).toBeUndefined();
   });
 
