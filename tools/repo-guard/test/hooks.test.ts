@@ -144,6 +144,19 @@ describe.skipIf(!HAS_GIT)(suiteName, () => {
     () => {
       const result = commitMsg('Add thing');
       expect(result.status).not.toBe(0);
+      expect(output(result)).toContain('type may not be empty');
+      expect(output(result)).toContain('type-empty');
+    },
+    HOOK_TIMEOUT_MS,
+  );
+
+  it(
+    'commit-msg runs the guard after commitlint and names its rule',
+    () => {
+      const result = commitMsg('feat(): add thing');
+      expect(result.status).not.toBe(0);
+      expect(output(result)).toContain('needs a conventional header');
+      expect(output(result)).toContain('[commit-message/conventional-header]');
     },
     HOOK_TIMEOUT_MS,
   );
