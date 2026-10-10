@@ -4,6 +4,7 @@ import { toSourceFile } from '../src/source';
 import {
   LISTENER_PATHS,
   NEAR_LISTENER_PATHS,
+  PUBLIC_LISTENER_LOADER,
   SECRET_HITS,
   SECRET_NEAR_MISSES,
   SECRET_PATH,
@@ -40,6 +41,19 @@ describe('secret terms check', () => {
   it.each(NEAR_LISTENER_PATHS)('still scans the look-alike path %s', (path) => {
     const findings = secretTermsCheck.check(toSourceFile(path, SECRET_WORD));
     expect(findings.length).toBeGreaterThan(0);
+  });
+
+  it('still scans the public loader inside the hidden client folder', () => {
+    const findings = secretTermsCheck.check(toSourceFile(PUBLIC_LISTENER_LOADER, SECRET_WORD));
+    expect(findings).toHaveLength(1);
+    expect(findings[0]).toMatchObject({ file: PUBLIC_LISTENER_LOADER, rule: 'secret-term-1' });
+  });
+
+  it('accepts a clean public loader', () => {
+    const findings = secretTermsCheck.check(
+      toSourceFile(PUBLIC_LISTENER_LOADER, "export const load = () => import('./bundle');"),
+    );
+    expect(findings).toEqual([]);
   });
 
   it('applies to readmes as well', () => {

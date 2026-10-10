@@ -101,6 +101,8 @@ export const LISTENER_PATHS: readonly string[] = [
   'assets/sprites/npc/listener/waker.png',
   'assets/listener/waker.png',
   'apps/client/src/listener/reexpress.ts',
+  'apps/client/src/listener/load/waker.ts',
+  'apps/client/src/listener/ui/load.ts',
 ];
 
 /** Paths that only look like the hidden-content folders and stay covered by the scan. */
@@ -110,6 +112,9 @@ export const NEAR_LISTENER_PATHS: readonly string[] = [
   'apps/client/src/ui/listener-waker.ts',
   'apps/server/src/listener/waker.ts',
 ];
+
+/** The client's loader for the hidden content: it sits in their folder but ships publicly. */
+export const PUBLIC_LISTENER_LOADER = 'apps/client/src/listener/load.ts';
 
 /** A path that carries a secret term in its own name. */
 export const SECRET_PATH = 'apps/server/src/systems/waker-spawn.ts';

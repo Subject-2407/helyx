@@ -37,3 +37,9 @@ export const SECRET_TERM_EXEMPT_GLOBS: readonly string[] = [
   'assets/**/listener/**',
   'apps/client/src/listener/**',
 ];
+
+/**
+ * Files inside the folders above that still ship in the public build, so they keep being
+ * scanned: the client's loader for the hidden content is bundled for every player.
+ */
+export const SECRET_TERM_SCANNED_GLOBS: readonly string[] = ['apps/client/src/listener/load.ts'];
