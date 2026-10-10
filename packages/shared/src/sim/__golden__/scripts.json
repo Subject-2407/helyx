@@ -1,0 +1,129 @@
+{
+  "scripts": [
+    {
+      "name": "walk into a corner",
+      "grid": {
+        "w8": 12,
+        "h8": 12,
+        "solids": []
+      },
+      "start": {
+        "x": 40,
+        "y": 40
+      },
+      "params": {},
+      "frames": [
+        {
+          "move": 8,
+          "dash": false,
+          "count": 120
+        }
+      ],
+      "expected": {
+        "x": 83,
+        "y": 88,
+        "stamina": 105,
+        "dashMs": 0,
+        "facing": 1
+      }
+    },
+    {
+      "name": "slide along a wall",
+      "grid": {
+        "w8": 16,
+        "h8": 12,
+        "solids": []
+      },
+      "start": {
+        "x": 20,
+        "y": 14
+      },
+      "params": {},
+      "frames": [
+        {
+          "move": 2,
+          "dash": false,
+          "count": 30
+        }
+      ],
+      "expected": {
+        "x": 48.59375,
+        "y": 14,
+        "stamina": 105,
+        "dashMs": 0,
+        "facing": 1
+      }
+    },
+    {
+      "name": "dash through a one tile gap",
+      "grid": {
+        "w8": 20,
+        "h8": 12,
+        "solids": [
+          [6, 1],
+          [6, 2],
+          [6, 3],
+          [6, 6],
+          [6, 7],
+          [6, 8],
+          [6, 9],
+          [6, 10]
+        ]
+      },
+      "start": {
+        "x": 30,
+        "y": 44
+      },
+      "params": {},
+      "frames": [
+        {
+          "move": 1,
+          "dash": true,
+          "count": 1
+        },
+        {
+          "move": 0,
+          "dash": false,
+          "count": 11
+        }
+      ],
+      "expected": {
+        "x": 85.953125,
+        "y": 44,
+        "stamina": 80.3,
+        "dashMs": 0,
+        "facing": 1
+      }
+    },
+    {
+      "name": "encumbered dash refused",
+      "grid": {
+        "w8": 20,
+        "h8": 12,
+        "solids": []
+      },
+      "start": {
+        "x": 30,
+        "y": 44
+      },
+      "params": {
+        "dashCost": null,
+        "speed": 40.6
+      },
+      "frames": [
+        {
+          "move": 1,
+          "dash": true,
+          "count": 12
+        }
+      ],
+      "expected": {
+        "x": 38.0625,
+        "y": 44,
+        "stamina": 105,
+        "dashMs": 0,
+        "facing": 1
+      }
+    }
+  ]
+}
