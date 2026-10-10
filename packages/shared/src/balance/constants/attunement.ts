@@ -34,6 +34,8 @@ export const ATTUNEMENT_K = {
   /** Bounds of every resonance component after composition. */
   RES_MIN: -1,
   RES_MAX: 1,
+  /** Decimals a composed resonance keeps, so sums like 0.6 + 0.2 compare exactly. */
+  RES_DECIMALS: 6,
 
   SYNC_CAP_START: 120,
   SYNC_CAP_STEP: 15,

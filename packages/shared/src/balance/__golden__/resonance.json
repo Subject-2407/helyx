@@ -1,0 +1,92 @@
+{
+  "willowmereSummerDay": {
+    "areaBase": {
+      "growth": 0.6,
+      "entropy": -0.2,
+      "order": 0,
+      "change": 0.2,
+      "force": 0,
+      "void": -0.4
+    },
+    "subzones": [
+      {
+        "name": "Wellspring Glade",
+        "priority": 1,
+        "add": {
+          "growth": 0.2,
+          "entropy": 0.2,
+          "order": 0.2,
+          "change": 0.2,
+          "force": 0.2,
+          "void": 0.2
+        }
+      }
+    ],
+    "phaseAdd": {},
+    "weatherAdd": {},
+    "seasonAdd": {
+      "force": 0.1
+    },
+    "expected": {
+      "growth": 0.8,
+      "void": -0.2,
+      "force": 0.3
+    }
+  },
+  "greyrendAutumnNight": {
+    "areaBase": {
+      "growth": -0.5,
+      "entropy": 0.6,
+      "order": 0.3,
+      "change": 0.1,
+      "force": 0,
+      "void": 0.1
+    },
+    "subzones": [
+      {
+        "name": "Rust Altar",
+        "priority": 1,
+        "add": {
+          "entropy": 0.3
+        }
+      }
+    ],
+    "phaseAdd": {
+      "void": 0.15,
+      "growth": -0.05,
+      "order": -0.05
+    },
+    "weatherAdd": {
+      "entropy": 0.15,
+      "growth": -0.1
+    },
+    "seasonAdd": {
+      "entropy": 0.1
+    },
+    "expected": {
+      "entropy": 1
+    }
+  },
+  "overlap": {
+    "subzones": [
+      {
+        "name": "Millstone Circle",
+        "priority": 1,
+        "add": {
+          "order": 0.5
+        }
+      },
+      {
+        "name": "Elder Willow grove",
+        "priority": 2,
+        "add": {
+          "growth": 0.3
+        }
+      }
+    ],
+    "expected": {
+      "order": 0,
+      "growth": 0.3
+    }
+  }
+}
