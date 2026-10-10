@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "path": "tools/repo-guard/src/patterns/**",
+      "check": "*",
+      "pattern": "*",
+      "reason": "The guard's own pattern and term definitions spell out what they look for."
+    },
+    {
+      "path": "tools/repo-guard/test/fixtures/**",
+      "check": "*",
+      "pattern": "*",
+      "reason": "Sample inputs the guard's tests must see rejected."
+    }
+  ]
+}
