@@ -1,0 +1,122 @@
+{
+  "chances": [1, 1, 1, 1, 1, 1, 0.8, 0.65, 0.5, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15],
+  "smithing": [
+    {
+      "level": 0,
+      "target": 7,
+      "chance": 0.8
+    },
+    {
+      "level": 25,
+      "target": 7,
+      "chance": 0.85
+    },
+    {
+      "level": 50,
+      "target": 15,
+      "chance": 0.25
+    },
+    {
+      "level": 60,
+      "target": 15,
+      "chance": 0.25
+    },
+    {
+      "level": 50,
+      "target": 6,
+      "chance": 1
+    }
+  ],
+  "rareIlvl10": {
+    "rarity": 2,
+    "ilvl": 10,
+    "toSix": {
+      "shards": 6,
+      "coins": 900
+    },
+    "cumulative": {
+      "shards": 21,
+      "coins": 3150
+    }
+  },
+  "failure": [
+    {
+      "target": 7,
+      "ward": false,
+      "after": 6
+    },
+    {
+      "target": 8,
+      "ward": false,
+      "after": 7
+    },
+    {
+      "target": 9,
+      "ward": false,
+      "after": 7
+    },
+    {
+      "target": 9,
+      "ward": true,
+      "after": 8
+    },
+    {
+      "target": 15,
+      "ward": false,
+      "after": 13
+    }
+  ],
+  "baseMult": [
+    {
+      "level": 0,
+      "mult": 1
+    },
+    {
+      "level": 6,
+      "mult": 1.3
+    },
+    {
+      "level": 7,
+      "mult": 1.37
+    },
+    {
+      "level": 15,
+      "mult": 1.93
+    }
+  ],
+  "shardTiers": [
+    {
+      "ilvl": 20,
+      "shard": "mat_tempering_shard_dull"
+    },
+    {
+      "ilvl": 21,
+      "shard": "mat_tempering_shard_keen"
+    },
+    {
+      "ilvl": 40,
+      "shard": "mat_tempering_shard_keen"
+    },
+    {
+      "ilvl": 41,
+      "shard": "mat_tempering_shard_bright"
+    },
+    {
+      "ilvl": 60,
+      "shard": "mat_tempering_shard_bright"
+    },
+    {
+      "ilvl": 61,
+      "shard": "mat_tempering_shard_radiant"
+    },
+    {
+      "ilvl": 80,
+      "shard": "mat_tempering_shard_radiant"
+    },
+    {
+      "ilvl": 81,
+      "shard": "mat_tempering_shard_flawless"
+    }
+  ],
+  "ceilings": [5, 6, 8, 9, 10, 12, 13, 14, 15, 15]
+}

@@ -14,6 +14,8 @@ export const ITEMS_K = {
   UNIQUE_MIN_RARITY: 5,
   /** Decimals a percent affix keeps when stored as a fraction (one tenth of a percent). */
   AFFIX_PCT_DECIMALS: 3,
+  /** Decimals an affix quality keeps, so repeated hones land exactly on their steps. */
+  AFFIX_QUALITY_DECIMALS: 6,
 
   UPGRADE_MAX: 15,
   UPGRADE_LOW_MAX: 6,

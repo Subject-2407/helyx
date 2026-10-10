@@ -1,0 +1,45 @@
+{
+  "reroll": [
+    {
+      "ilvl": 10,
+      "count": 0,
+      "stones": 1,
+      "coins": 200
+    },
+    {
+      "ilvl": 10,
+      "count": 9,
+      "stones": 10,
+      "coins": 2000
+    },
+    {
+      "ilvl": 10,
+      "count": 12,
+      "stones": 10,
+      "coins": 2000
+    }
+  ],
+  "hone": [
+    {
+      "quality": 0.3,
+      "after": 0.4
+    },
+    {
+      "quality": 0.7,
+      "after": 0.8
+    },
+    {
+      "quality": 0.95,
+      "after": 1
+    },
+    {
+      "quality": 1,
+      "after": 1
+    }
+  ],
+  "honeCost": {
+    "ilvl": 12,
+    "powder": 1,
+    "coins": 120
+  }
+}

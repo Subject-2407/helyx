@@ -1,0 +1,42 @@
+{
+  "costs": [
+    {
+      "grade": 1,
+      "ilvl": 10,
+      "essences": 2,
+      "coins": 150,
+      "level": 1
+    },
+    {
+      "grade": 2,
+      "ilvl": 10,
+      "essences": 5,
+      "coins": 300,
+      "level": 10
+    },
+    {
+      "grade": 3,
+      "ilvl": 10,
+      "essences": 10,
+      "coins": 450,
+      "level": 20
+    }
+  ],
+  "effects": [
+    {
+      "grade": 1,
+      "weapon": 0.2,
+      "other": 0.06
+    },
+    {
+      "grade": 2,
+      "weapon": 0.35,
+      "other": 0.1
+    },
+    {
+      "grade": 3,
+      "weapon": 0.5,
+      "other": 0.15
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "extract": [
+    {
+      "grade": "chipped",
+      "units": 1,
+      "coins": 50
+    },
+    {
+      "grade": "flawed",
+      "units": 2,
+      "coins": 200
+    },
+    {
+      "grade": "clear",
+      "units": 3,
+      "coins": 450
+    },
+    {
+      "grade": "flawless",
+      "units": 4.5,
+      "coins": 1013
+    },
+    {
+      "grade": "perfect",
+      "units": 6,
+      "coins": 1800
+    }
+  ],
+  "combine": [
+    {
+      "grade": "chipped",
+      "next": "flawed",
+      "coins": 400
+    },
+    {
+      "grade": "flawed",
+      "next": "clear",
+      "coins": 600
+    },
+    {
+      "grade": "clear",
+      "next": "flawless",
+      "coins": 900
+    },
+    {
+      "grade": "flawless",
+      "next": "perfect",
+      "coins": 1200
+    }
+  ],
+  "effects": [
+    {
+      "host": "weapon",
+      "grade": "clear",
+      "effect": 0.06
+    },
+    {
+      "host": "armor",
+      "grade": "chipped",
+      "effect": 0.02
+    },
+    {
+      "host": "accessory",
+      "grade": "perfect",
+      "effect": 0.09
+    }
+  ]
+}
