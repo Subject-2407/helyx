@@ -1,0 +1,32 @@
+{
+  "samples": [
+    {
+      "ilvl": 10,
+      "rarity": 0,
+      "upgrade": 0,
+      "value": 100,
+      "vendor": 20
+    },
+    {
+      "ilvl": 10,
+      "rarity": 2,
+      "upgrade": 6,
+      "value": 640,
+      "vendor": 128
+    },
+    {
+      "ilvl": 1,
+      "rarity": 9,
+      "upgrade": 15,
+      "value": 8000,
+      "vendor": 1600
+    },
+    {
+      "ilvl": 7,
+      "rarity": 1,
+      "upgrade": 1,
+      "value": 154,
+      "vendor": 30
+    }
+  ]
+}

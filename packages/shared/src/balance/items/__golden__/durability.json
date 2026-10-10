@@ -1,0 +1,31 @@
+{
+  "weapon": {
+    "below": 24,
+    "at": 25,
+    "entropyHitsForPoint": 13
+  },
+  "armor": {
+    "hitsPerPoint": 15
+  },
+  "repair": [
+    {
+      "missing": 10,
+      "ilvl": 10,
+      "rarity": 0,
+      "coins": 50
+    },
+    {
+      "missing": 10,
+      "ilvl": 10,
+      "rarity": 2,
+      "coins": 75
+    },
+    {
+      "missing": 7,
+      "ilvl": 3,
+      "rarity": 1,
+      "coins": 14
+    }
+  ],
+  "kit": 30
+}
