@@ -14,5 +14,6 @@ export * from './movement.js';
 export * from './proficiency.js';
 export * from './regen.js';
 export * from './resonance.js';
+export * from './revival.js';
 export * from './status.js';
 export * from './sync.js';

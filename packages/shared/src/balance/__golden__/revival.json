@@ -1,0 +1,157 @@
+{
+  "downed": [
+    {
+      "frayedDowns": 0,
+      "timerS": 30
+    },
+    {
+      "frayedDowns": 1,
+      "timerS": 20
+    },
+    {
+      "frayedDowns": 2,
+      "timerS": 10
+    },
+    {
+      "frayedDowns": 3,
+      "timerS": 10
+    },
+    {
+      "frayedDowns": 4,
+      "timerS": 10
+    }
+  ],
+  "frayedMaxHp": [
+    {
+      "base": 284,
+      "frayed": 227
+    },
+    {
+      "base": 120,
+      "frayed": 96
+    }
+  ],
+  "frayedDamage": {
+    "hit": 100,
+    "dealt": 90
+  },
+  "revive": [
+    {
+      "source": "rekindle",
+      "frayedMax": 227,
+      "hp": 68,
+      "staminaFrac": 0.5,
+      "manaFrac": null,
+      "invulnerableS": 1.5,
+      "frayedS": 300
+    },
+    {
+      "source": "salve",
+      "frayedMax": 227,
+      "hp": 57,
+      "staminaFrac": 0.5,
+      "manaFrac": null,
+      "invulnerableS": 1.5,
+      "frayedS": 300
+    },
+    {
+      "source": "auto",
+      "frayedMax": 227,
+      "hp": 91,
+      "staminaFrac": 0.5,
+      "manaFrac": null,
+      "invulnerableS": 3,
+      "frayedS": 300
+    },
+    {
+      "source": "resurrect",
+      "frayedMax": 227,
+      "hp": 45,
+      "staminaFrac": 0.5,
+      "manaFrac": 0.25,
+      "invulnerableS": 0,
+      "frayedS": 600
+    }
+  ],
+  "lockout": {
+    "blockedAtS": 599.95,
+    "availableAtS": 600
+  },
+  "channels": {
+    "rekindle": {
+      "channelS": 3,
+      "rangePx": 48
+    },
+    "salve": {
+      "channelS": 2,
+      "rangePx": 32
+    },
+    "execute": {
+      "channelS": 2,
+      "rangePx": 32
+    },
+    "second_dawn": {
+      "channelS": 8,
+      "rangePx": 48
+    },
+    "lantern": {
+      "channelS": 6,
+      "rangePx": 32
+    }
+  },
+  "lethal": [
+    {
+      "noRescue": true,
+      "featherArmed": true,
+      "featherLocked": false,
+      "outcome": "die"
+    },
+    {
+      "noRescue": true,
+      "featherArmed": true,
+      "featherLocked": true,
+      "outcome": "die"
+    },
+    {
+      "noRescue": true,
+      "featherArmed": false,
+      "featherLocked": false,
+      "outcome": "die"
+    },
+    {
+      "noRescue": true,
+      "featherArmed": false,
+      "featherLocked": true,
+      "outcome": "die"
+    },
+    {
+      "noRescue": false,
+      "featherArmed": true,
+      "featherLocked": false,
+      "outcome": "autoRevive"
+    },
+    {
+      "noRescue": false,
+      "featherArmed": true,
+      "featherLocked": true,
+      "outcome": "down"
+    },
+    {
+      "noRescue": false,
+      "featherArmed": false,
+      "featherLocked": false,
+      "outcome": "down"
+    },
+    {
+      "noRescue": false,
+      "featherArmed": false,
+      "featherLocked": true,
+      "outcome": "down"
+    }
+  ],
+  "window": {
+    "windowS": 180,
+    "consentS": 30,
+    "remnantTtlS": 900
+  }
+}
