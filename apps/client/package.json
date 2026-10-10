@@ -1,0 +1,17 @@
+{
+  "name": "@helyx/client",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@helyx/shared": "workspace:*",
+    "@helyx/protocol": "workspace:*",
+    "@helyx/content": "workspace:*"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@helyx/content-cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "validate": "node -e \"console.log('content: nothing to validate yet')\""
+  },
+  "dependencies": {
+    "@helyx/shared": "workspace:*",
+    "@helyx/content": "workspace:*"
+  }
+}

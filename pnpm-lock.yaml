@@ -1,0 +1,94 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    devDependencies:
+      '@helyx/config':
+        specifier: workspace:*
+        version: link:packages/config
+      '@helyx/repo-guard':
+        specifier: workspace:*
+        version: link:tools/repo-guard
+
+  apps/client:
+    dependencies:
+      '@helyx/content':
+        specifier: workspace:*
+        version: link:../../packages/content
+      '@helyx/protocol':
+        specifier: workspace:*
+        version: link:../../packages/protocol
+      '@helyx/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+
+  apps/server:
+    dependencies:
+      '@helyx/content':
+        specifier: workspace:*
+        version: link:../../packages/content
+      '@helyx/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@helyx/protocol':
+        specifier: workspace:*
+        version: link:../../packages/protocol
+      '@helyx/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+
+  packages/config: {}
+
+  packages/content:
+    dependencies:
+      '@helyx/shared':
+        specifier: workspace:*
+        version: link:../shared
+
+  packages/db:
+    dependencies:
+      '@helyx/shared':
+        specifier: workspace:*
+        version: link:../shared
+
+  packages/protocol:
+    dependencies:
+      '@helyx/shared':
+        specifier: workspace:*
+        version: link:../shared
+
+  packages/shared: {}
+
+  tools/asset-pipeline:
+    dependencies:
+      '@helyx/content':
+        specifier: workspace:*
+        version: link:../../packages/content
+      '@helyx/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+
+  tools/bots:
+    dependencies:
+      '@helyx/protocol':
+        specifier: workspace:*
+        version: link:../../packages/protocol
+      '@helyx/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+
+  tools/content-cli:
+    dependencies:
+      '@helyx/content':
+        specifier: workspace:*
+        version: link:../../packages/content
+      '@helyx/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+
+  tools/repo-guard: {}

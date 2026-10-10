@@ -1,0 +1,16 @@
+{
+  "name": "@helyx/bots",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@helyx/shared": "workspace:*",
+    "@helyx/protocol": "workspace:*"
+  }
+}
