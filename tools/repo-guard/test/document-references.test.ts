@@ -23,10 +23,11 @@ describe('document references check', () => {
     expect([...documentReferencesCheck.rules].sort()).toEqual([...sampled].sort());
   });
 
-  it('skips contributor readmes anywhere in the tree', () => {
+  it.each(['README.md', 'apps/x/README.md'])('scans the contributor readme %s too', (path) => {
     const text = REFERENCE_HITS.map((s) => s.text).join('\n');
-    expect(documentReferencesCheck.check(toSourceFile('README.md', text))).toEqual([]);
-    expect(documentReferencesCheck.check(toSourceFile('apps/x/README.md', text))).toEqual([]);
+    const findings = documentReferencesCheck.check(toSourceFile(path, text));
+    const reported = new Set(findings.map((f) => f.rule));
+    expect([...reported].sort()).toEqual([...documentReferencesCheck.rules].sort());
   });
 
   it('reports the line number of each hit', () => {
