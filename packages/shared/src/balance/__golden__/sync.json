@@ -18,5 +18,143 @@
       "wis": 100,
       "expected": 5.5
     }
-  ]
+  ],
+  "useGain": {
+    "current": 30,
+    "growthMult": 1.225,
+    "tags": 1,
+    "delta": 0.0060025,
+    "stored": 0.006002
+  },
+  "effort": [
+    {
+      "name": "starting mind to thirty",
+      "target": 30,
+      "growthMult": 1.225,
+      "casts": 3500
+    },
+    {
+      "name": "trained mind to thirty",
+      "target": 30,
+      "growthMult": 3.25,
+      "casts": 1320
+    },
+    {
+      "name": "devoted mind to thirty",
+      "target": 30,
+      "growthMult": 5.5,
+      "casts": 780
+    },
+    {
+      "name": "starting mind to sixty",
+      "target": 60,
+      "growthMult": 1.225,
+      "casts": 12200
+    },
+    {
+      "name": "trained mind to sixty",
+      "target": 60,
+      "growthMult": 3.25,
+      "casts": 4600
+    },
+    {
+      "name": "devoted mind to sixty",
+      "target": 60,
+      "growthMult": 5.5,
+      "casts": 2730
+    },
+    {
+      "name": "starting mind to ninety",
+      "target": 90,
+      "growthMult": 1.225,
+      "casts": 73500
+    },
+    {
+      "name": "trained mind to ninety",
+      "target": 90,
+      "growthMult": 3.25,
+      "casts": 27700
+    },
+    {
+      "name": "devoted mind to ninety",
+      "target": 90,
+      "growthMult": 5.5,
+      "casts": 16400
+    }
+  ],
+  "discrete": {
+    "growthMult": 1.225,
+    "target": 30,
+    "casts": 3499,
+    "coarseStall": 9.65
+  },
+  "cap": {
+    "others": 100,
+    "aspect": 19.5,
+    "delta": 1,
+    "cap": 120,
+    "applied": 0.5
+  },
+  "capProgression": [
+    {
+      "trials": 0,
+      "cap": 120
+    },
+    {
+      "trials": 1,
+      "cap": 135
+    },
+    {
+      "trials": 12,
+      "cap": 300
+    },
+    {
+      "trials": 20,
+      "cap": 300
+    }
+  ],
+  "site": {
+    "base": 1.5,
+    "current": 0,
+    "wis": 5,
+    "gain": 1.575
+  },
+  "echo": {
+    "old": 34.567891,
+    "echo": 3.45
+  },
+  "tiers": [
+    {
+      "value": 0,
+      "tier": "novice"
+    },
+    {
+      "value": 29.999999,
+      "tier": "novice"
+    },
+    {
+      "value": 30,
+      "tier": "adept"
+    },
+    {
+      "value": 59.999999,
+      "tier": "adept"
+    },
+    {
+      "value": 60,
+      "tier": "attuned"
+    },
+    {
+      "value": 90,
+      "tier": "mastery"
+    },
+    {
+      "value": 100,
+      "tier": "mastery"
+    }
+  ],
+  "calm": {
+    "manaRegen": 0.1,
+    "durationS": 600
+  }
 }
