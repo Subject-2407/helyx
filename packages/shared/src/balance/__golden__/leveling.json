@@ -1,0 +1,36 @@
+{
+  "xpToNext": [
+    { "level": 1, "expected": 80 },
+    { "level": 2, "expected": 269 },
+    { "level": 3, "expected": 547 },
+    { "level": 5, "expected": 1337 },
+    { "level": 8, "expected": 3044 },
+    { "level": 10, "expected": 4498 },
+    { "level": 15, "expected": 9146 },
+    { "level": 20, "expected": 15131 },
+    { "level": 50, "expected": 75212 },
+    { "level": 99, "expected": 248571 }
+  ],
+  "statPoints": [
+    { "level": 2, "expected": 3 },
+    { "level": 5, "expected": 3 },
+    { "level": 9, "expected": 3 },
+    { "level": 10, "expected": 4 },
+    { "level": 11, "expected": 3 },
+    { "level": 20, "expected": 4 },
+    { "level": 100, "expected": 4 }
+  ],
+  "levelCap": [
+    { "thresholds": 0, "expected": 100 },
+    { "thresholds": 1, "expected": 110 },
+    { "thresholds": 2, "expected": 120 }
+  ],
+  "gatherXp": [
+    { "nodeLevel": 1, "expected": 3 },
+    { "nodeLevel": 10, "expected": 12 }
+  ],
+  "craftXp": [
+    { "recipeLevel": 1, "expected": 4 },
+    { "recipeLevel": 10, "expected": 13 }
+  ]
+}

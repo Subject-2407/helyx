@@ -1,0 +1,61 @@
+{
+  "combat": [
+    { "name": "just hit", "lastDamageAgoS": 0, "inCombat": true },
+    { "name": "a moment before the window closes", "lastDamageAgoS": 5.99, "inCombat": true },
+    { "name": "the window has closed", "lastDamageAgoS": 6.0, "inCombat": false },
+    { "name": "long after the last hit", "lastDamageAgoS": 120, "inCombat": false }
+  ],
+  "hp": [
+    {
+      "name": "in combat uses vitality",
+      "inCombat": true,
+      "vit": 5,
+      "maxHp": 120,
+      "expected": 0.25
+    },
+    {
+      "name": "out of combat uses max health",
+      "inCombat": false,
+      "vit": 5,
+      "maxHp": 120,
+      "expected": 2.4
+    },
+    {
+      "name": "sturdy fighter in combat",
+      "inCombat": true,
+      "vit": 40,
+      "maxHp": 600,
+      "expected": 2
+    },
+    { "name": "sturdy fighter at rest", "inCombat": false, "vit": 40, "maxHp": 600, "expected": 12 }
+  ],
+  "mana": [
+    { "name": "starting wisdom in combat", "inCombat": true, "wis": 5, "expected": 1.0 },
+    { "name": "starting wisdom at rest", "inCombat": false, "wis": 5, "expected": 3.0 },
+    { "name": "high wisdom in combat", "inCombat": true, "wis": 30, "expected": 3.5 },
+    { "name": "high wisdom at rest", "inCombat": false, "wis": 30, "expected": 10.5 }
+  ],
+  "linger": [
+    { "name": "never fought", "lastDamageAgoS": null, "inSafeZone": false, "expected": 30 },
+    { "name": "fought a moment ago", "lastDamageAgoS": 1, "inSafeZone": false, "expected": 60 },
+    {
+      "name": "out of combat but still inside the longer window",
+      "lastDamageAgoS": 7,
+      "inSafeZone": false,
+      "expected": 60
+    },
+    {
+      "name": "a moment before the longer window closes",
+      "lastDamageAgoS": 9.99,
+      "inSafeZone": false,
+      "expected": 60
+    },
+    {
+      "name": "the longer window has closed",
+      "lastDamageAgoS": 10,
+      "inSafeZone": false,
+      "expected": 30
+    },
+    { "name": "safe zones never linger", "lastDamageAgoS": 1, "inSafeZone": true, "expected": 0 }
+  ]
+}

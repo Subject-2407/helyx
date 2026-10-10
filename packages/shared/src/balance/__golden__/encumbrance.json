@@ -1,0 +1,52 @@
+{
+  "bands": [
+    {
+      "name": "exactly at capacity",
+      "ratio": 1.0,
+      "tier": 0,
+      "moveMult": 1,
+      "dashCostMult": 1,
+      "canMove": true
+    },
+    {
+      "name": "just over capacity",
+      "ratio": 1.01,
+      "tier": 1,
+      "moveMult": 0.8,
+      "dashCostMult": 1.5,
+      "canMove": true
+    },
+    {
+      "name": "top of the light band",
+      "ratio": 1.25,
+      "tier": 1,
+      "moveMult": 0.8,
+      "dashCostMult": 1.5,
+      "canMove": true
+    },
+    {
+      "name": "just into the heavy band",
+      "ratio": 1.26,
+      "tier": 2,
+      "moveMult": 0.5,
+      "dashCostMult": null,
+      "canMove": true
+    },
+    {
+      "name": "top of the heavy band",
+      "ratio": 1.5,
+      "tier": 2,
+      "moveMult": 0.5,
+      "dashCostMult": null,
+      "canMove": true
+    },
+    {
+      "name": "overloaded",
+      "ratio": 1.51,
+      "tier": 3,
+      "moveMult": 0,
+      "dashCostMult": null,
+      "canMove": false
+    }
+  ]
+}
