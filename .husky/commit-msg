@@ -1,0 +1,1 @@
+pnpm exec commitlint --edit "$1" && pnpm run --silent guard commit-msg "$1"
