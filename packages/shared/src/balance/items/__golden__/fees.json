@@ -1,0 +1,35 @@
+{
+  "reshape": [
+    {
+      "level": 5,
+      "coins": 405
+    },
+    {
+      "level": 10,
+      "coins": 998
+    },
+    {
+      "level": 15,
+      "coins": 1690
+    }
+  ],
+  "bank": [500, 1500, 4500, 13500, 40500, 121500, 364500, 1093500, 3280500],
+  "bankSlotsAfterAll": 150,
+  "market": {
+    "price": 4200,
+    "fee": 42,
+    "tax": 210,
+    "seller": 3990
+  },
+  "listingFeeMinimum": {
+    "price": 30,
+    "fee": 1
+  },
+  "stall": {
+    "hours": 3,
+    "rent": 60,
+    "sales": 1250,
+    "tax": 25
+  },
+  "clanFounding": 5000
+}
