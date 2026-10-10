@@ -7,6 +7,7 @@ export * from './dissonance.js';
 export * from './encumbrance.js';
 export * from './leveling.js';
 export * from './math.js';
+export * from './monsters.js';
 export * from './movement.js';
 export * from './proficiency.js';
 export * from './regen.js';

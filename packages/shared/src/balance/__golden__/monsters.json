@@ -1,0 +1,341 @@
+{
+  "templates": [
+    {
+      "level": 1,
+      "archetype": "fodder",
+      "hp": 27,
+      "atk": 8,
+      "def": 2,
+      "xp": 3
+    },
+    {
+      "level": 1,
+      "archetype": "standard",
+      "hp": 45,
+      "atk": 10,
+      "def": 4,
+      "xp": 6
+    },
+    {
+      "level": 1,
+      "archetype": "skirmisher",
+      "hp": 36,
+      "atk": 9,
+      "def": 3,
+      "xp": 6
+    },
+    {
+      "level": 1,
+      "archetype": "caster",
+      "hp": 31,
+      "atk": 12,
+      "def": 2,
+      "xp": 8
+    },
+    {
+      "level": 1,
+      "archetype": "brute",
+      "hp": 72,
+      "atk": 14,
+      "def": 5,
+      "xp": 10
+    },
+    {
+      "level": 1,
+      "archetype": "elite",
+      "hp": 180,
+      "atk": 16,
+      "def": 5,
+      "xp": 34
+    },
+    {
+      "level": 1,
+      "archetype": "instance_boss",
+      "hp": 1080,
+      "atk": 17,
+      "def": 6,
+      "xp": 83
+    },
+    {
+      "level": 1,
+      "archetype": "trial_boss",
+      "hp": 630,
+      "atk": 18,
+      "def": 6,
+      "xp": 69
+    },
+    {
+      "level": 1,
+      "archetype": "boss",
+      "hp": 9000,
+      "atk": 19,
+      "def": 7,
+      "xp": 173
+    },
+    {
+      "level": 8,
+      "archetype": "fodder",
+      "hp": 240,
+      "atk": 22,
+      "def": 8,
+      "xp": 69
+    },
+    {
+      "level": 8,
+      "archetype": "standard",
+      "hp": 399,
+      "atk": 27,
+      "def": 14,
+      "xp": 138
+    },
+    {
+      "level": 8,
+      "archetype": "skirmisher",
+      "hp": 320,
+      "atk": 24,
+      "def": 11,
+      "xp": 138
+    },
+    {
+      "level": 8,
+      "archetype": "caster",
+      "hp": 280,
+      "atk": 33,
+      "def": 10,
+      "xp": 166
+    },
+    {
+      "level": 8,
+      "archetype": "brute",
+      "hp": 639,
+      "atk": 35,
+      "def": 20,
+      "xp": 207
+    },
+    {
+      "level": 8,
+      "archetype": "elite",
+      "hp": 1598,
+      "atk": 41,
+      "def": 21,
+      "xp": 691
+    },
+    {
+      "level": 8,
+      "archetype": "instance_boss",
+      "hp": 9587,
+      "atk": 44,
+      "def": 22,
+      "xp": 1660
+    },
+    {
+      "level": 8,
+      "archetype": "trial_boss",
+      "hp": 5592,
+      "atk": 46,
+      "def": 22,
+      "xp": 1383
+    },
+    {
+      "level": 8,
+      "archetype": "boss",
+      "hp": 79889,
+      "atk": 49,
+      "def": 28,
+      "xp": 3459
+    },
+    {
+      "level": 10,
+      "archetype": "fodder",
+      "hp": 303,
+      "atk": 26,
+      "def": 10,
+      "xp": 89
+    },
+    {
+      "level": 10,
+      "archetype": "standard",
+      "hp": 505,
+      "atk": 32,
+      "def": 17,
+      "xp": 179
+    },
+    {
+      "level": 10,
+      "archetype": "skirmisher",
+      "hp": 404,
+      "atk": 29,
+      "def": 14,
+      "xp": 179
+    },
+    {
+      "level": 10,
+      "archetype": "caster",
+      "hp": 353,
+      "atk": 38,
+      "def": 12,
+      "xp": 215
+    },
+    {
+      "level": 10,
+      "archetype": "brute",
+      "hp": 808,
+      "atk": 42,
+      "def": 24,
+      "xp": 269
+    },
+    {
+      "level": 10,
+      "archetype": "elite",
+      "hp": 2020,
+      "atk": 48,
+      "def": 26,
+      "xp": 899
+    },
+    {
+      "level": 10,
+      "archetype": "instance_boss",
+      "hp": 12118,
+      "atk": 51,
+      "def": 27,
+      "xp": 2159
+    },
+    {
+      "level": 10,
+      "archetype": "trial_boss",
+      "hp": 7069,
+      "atk": 54,
+      "def": 27,
+      "xp": 1799
+    },
+    {
+      "level": 10,
+      "archetype": "boss",
+      "hp": 100982,
+      "atk": 58,
+      "def": 34,
+      "xp": 4498
+    },
+    {
+      "level": 15,
+      "archetype": "fodder",
+      "hp": 464,
+      "atk": 35,
+      "def": 15,
+      "xp": 140
+    },
+    {
+      "level": 15,
+      "archetype": "standard",
+      "hp": 773,
+      "atk": 44,
+      "def": 25,
+      "xp": 281
+    },
+    {
+      "level": 15,
+      "archetype": "skirmisher",
+      "hp": 618,
+      "atk": 40,
+      "def": 20,
+      "xp": 281
+    },
+    {
+      "level": 15,
+      "archetype": "caster",
+      "hp": 541,
+      "atk": 53,
+      "def": 17,
+      "xp": 337
+    },
+    {
+      "level": 15,
+      "archetype": "brute",
+      "hp": 1237,
+      "atk": 57,
+      "def": 34,
+      "xp": 422
+    },
+    {
+      "level": 15,
+      "archetype": "elite",
+      "hp": 3091,
+      "atk": 66,
+      "def": 37,
+      "xp": 1407
+    },
+    {
+      "level": 15,
+      "archetype": "instance_boss",
+      "hp": 18549,
+      "atk": 70,
+      "def": 39,
+      "xp": 3376
+    },
+    {
+      "level": 15,
+      "archetype": "trial_boss",
+      "hp": 10820,
+      "atk": 75,
+      "def": 39,
+      "xp": 2814
+    },
+    {
+      "level": 15,
+      "archetype": "boss",
+      "hp": 154575,
+      "atk": 79,
+      "def": 49,
+      "xp": 7035
+    }
+  ],
+  "worldBoss": [
+    {
+      "players": 1,
+      "mult": 1
+    },
+    {
+      "players": 2,
+      "mult": 1.6
+    },
+    {
+      "players": 20,
+      "mult": 12.4
+    },
+    {
+      "players": 25,
+      "mult": 12.4
+    },
+    {
+      "players": 0,
+      "mult": 1
+    }
+  ],
+  "instance": [
+    {
+      "party": 1,
+      "mult": 1
+    },
+    {
+      "party": 2,
+      "mult": 1.7
+    },
+    {
+      "party": 3,
+      "mult": 2.4
+    },
+    {
+      "party": 4,
+      "mult": 3.1
+    }
+  ],
+  "coins": {
+    "level": 10,
+    "archetype": "standard",
+    "rolls": 10000,
+    "chance": 0.6,
+    "tolerance": 0.01,
+    "min": 7,
+    "max": 18
+  }
+}
