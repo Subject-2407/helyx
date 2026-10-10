@@ -2,15 +2,7 @@
  * Status effects, crowd-control diminishing returns and poise. The rules live in the `status`
  * folder, one concern per file; this module is their single entry point.
  */
-export {
-  KNOCKBACK_PUSH_S,
-  STATUS_DEFAULTS,
-  STATUS_NAMES,
-  statusDuration,
-  type StackingKind,
-  type StatusDefaults,
-  type StatusName,
-} from './status/defaults.js';
+export { KNOCKBACK_PUSH_S, statusDuration } from './status/defaults.js';
 export {
   applyStatus,
   DEFAULT_STACKING_RULES,
@@ -29,14 +21,10 @@ export {
 } from './status/diminishing.js';
 export {
   applyPoiseDamage,
-  ARCHETYPE_POISE,
   archetypePoise,
-  DEFAULT_POISE_DAMAGE,
   playerPoise,
   poiseRegenDelayS,
   regenPoise,
-  type PoiseArchetype,
-  type PoiseHitKind,
   type PoiseHitResult,
   type PoiseState,
 } from './status/poise.js';

@@ -1,11 +1,6 @@
-import { CLOCK_K, MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE } from './clock-constants.js';
-
-/** The four parts of a game day. */
-export type GameDayPhase = 'dawn' | 'day' | 'dusk' | 'night';
-
-/** Seasons in calendar order; a season's position in this list is its index. */
-const SEASON_ORDER = ['spring', 'summer', 'autumn', 'winter'] as const;
-export type GameSeason = (typeof SEASON_ORDER)[number];
+import { K } from '../balance/constants.js';
+import { SEASONS, type DayPhase, type Season } from '../types/world.js';
+import { MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE } from './clock-constants.js';
 
 /** World clock settings shared by every room and client. */
 export interface GameClockConfig {
@@ -25,15 +20,15 @@ export interface GameTime {
   gameMs: number;
   hour: number;
   minute: number;
-  phase: GameDayPhase;
+  phase: DayPhase;
   /** Real day within the current season, starting at 1. */
   dayOfSeason: number;
-  season: GameSeason;
+  season: Season;
   /** Position of `season` in the calendar, 0 for spring to 3 for winter. */
   seasonIndex: number;
 }
 
-const GAME_DAY_IN_GAME_MS = CLOCK_K.GAME_DAY_MS * CLOCK_K.GAME_TIME_SCALE;
+const GAME_DAY_IN_GAME_MS = K.GAME_DAY_MS * K.GAME_TIME_SCALE;
 
 function requireNonNegative(label: string, value: number): void {
   if (!Number.isFinite(value) || value < 0) {
@@ -52,10 +47,10 @@ function validateConfig(config: GameClockConfig): void {
 }
 
 /** Day phase for a game hour in [0, 24). Night wraps across midnight. */
-export function dayPhaseAt(hour: number): GameDayPhase {
-  if (hour >= CLOCK_K.NIGHT_START_HOUR || hour < CLOCK_K.DAWN_START_HOUR) return 'night';
-  if (hour < CLOCK_K.DAY_START_HOUR) return 'dawn';
-  if (hour < CLOCK_K.DUSK_START_HOUR) return 'day';
+export function dayPhaseAt(hour: number): DayPhase {
+  if (hour >= K.GAME_NIGHT_HOUR || hour < K.GAME_DAWN_HOUR) return 'night';
+  if (hour < K.GAME_DAY_HOUR) return 'dawn';
+  if (hour < K.GAME_DUSK_HOUR) return 'day';
   return 'dusk';
 }
 
@@ -70,20 +65,20 @@ export function gameTime(serverNowMs: number, config: GameClockConfig): GameTime
   if (realElapsedMs < 0) {
     throw new RangeError(`The world clock does not run before its epoch`);
   }
-  const gameMs = realElapsedMs * CLOCK_K.GAME_TIME_SCALE;
+  const gameMs = realElapsedMs * K.GAME_TIME_SCALE;
   const msIntoDay = gameMs % GAME_DAY_IN_GAME_MS;
   const hour = Math.floor(msIntoDay / MS_PER_HOUR);
   const minute = Math.floor((msIntoDay % MS_PER_HOUR) / MS_PER_MINUTE);
   const realDays = Math.floor(realElapsedMs / MS_PER_DAY);
   const seasonsElapsed = Math.floor(realDays / config.seasonLengthDays);
-  const seasonIndex = seasonsElapsed % CLOCK_K.SEASON_COUNT;
+  const seasonIndex = seasonsElapsed % K.SEASON_COUNT;
   return {
     gameMs,
     hour,
     minute,
     phase: dayPhaseAt(hour),
     dayOfSeason: (realDays % config.seasonLengthDays) + 1,
-    season: SEASON_ORDER[seasonIndex] ?? SEASON_ORDER[0],
+    season: SEASONS[seasonIndex] ?? SEASONS[0],
     seasonIndex,
   };
 }

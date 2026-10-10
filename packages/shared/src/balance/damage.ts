@@ -6,29 +6,14 @@
  * order. Values stay unrounded until the very last step.
  */
 import type { Rng } from '../rng/rng.js';
-import { counterMultiplier, type AspectProfile, type AspectTag } from './counter.js';
+import type { Aspect, PartialAspectVector } from '../types/aspect.js';
+import type { EnchantGrade } from '../types/items.js';
+import { ENCHANT_GRADES, K, STATUS_TABLE } from './constants.js';
+import { counterMultiplier, type AspectProfile } from './counter.js';
 import { damageReduction } from './derived-stats.js';
+import { assertFraction } from './guards.js';
+import { mean } from './math.js';
 import { profDamageMult } from './proficiency.js';
-import { STATUS_DEFAULTS } from './status.js';
-
-/**
- * Tuning values for the pipeline. They mirror the shared balance table key for key and move
- * there once that table exists; nothing outside this module should import them.
- */
-const DAMAGE_K = Object.freeze({
-  PVP_SCALE: 0.6,
-  VAR: 0.05,
-  MIN_HIT: 1,
-} as const);
-
-/** Share of an enchanted weapon's basic attack that carries its Aspect, by enchant grade. */
-const ENCHANT_TAGGED_PORTION: Readonly<Record<EnchantGrade, number>> = Object.freeze({
-  1: 0.2,
-  2: 0.35,
-  3: 0.5,
-});
-
-export type EnchantGrade = 1 | 2 | 3;
 
 /** Damage coefficients of one hit: a flat base plus shares of attack and aspect power. */
 export interface DamageScaling {
@@ -43,7 +28,7 @@ export interface AttackerPowers {
 }
 
 /** Aspect resist per Aspect; missing Aspects count as 0. */
-export type AspectResists = Readonly<Partial<Record<AspectTag, number>>>;
+export type AspectResists = PartialAspectVector;
 
 export interface HitInput {
   readonly damage: DamageScaling;
@@ -64,7 +49,7 @@ export interface HitInput {
   readonly targetDef: number;
   /** Tagged portion of the hit, from `taggedPortion`. */
   readonly p: number;
-  readonly tags: readonly AspectTag[];
+  readonly tags: readonly Aspect[];
   readonly targetProfile: AspectProfile;
   readonly targetResists: AspectResists;
   /** Product of the target-side modifiers, from `targetModsMult`. Defaults to 1. */
@@ -85,13 +70,7 @@ export type DamageSource =
   | { readonly kind: 'physical' }
   | { readonly kind: 'aspect' }
   | { readonly kind: 'basic'; readonly enchantGrade?: EnchantGrade }
-  | { readonly kind: 'monster'; readonly tags: readonly AspectTag[]; readonly p?: number };
-
-function assertFraction(value: number, what: string): void {
-  if (!Number.isFinite(value) || value < 0 || value > 1) {
-    throw new RangeError(`${what} must be between 0 and 1, got ${value}`);
-  }
-}
+  | { readonly kind: 'monster'; readonly tags: readonly Aspect[]; readonly p?: number };
 
 /** Share of a hit's damage that carries its Aspect tags. */
 export function taggedPortion(source: DamageSource): number {
@@ -101,7 +80,7 @@ export function taggedPortion(source: DamageSource): number {
     case 'aspect':
       return 1;
     case 'basic':
-      return source.enchantGrade === undefined ? 0 : ENCHANT_TAGGED_PORTION[source.enchantGrade];
+      return source.enchantGrade === undefined ? 0 : ENCHANT_GRADES[source.enchantGrade].p;
     case 'monster': {
       if (source.tags.length === 0) {
         return 0;
@@ -114,15 +93,8 @@ export function taggedPortion(source: DamageSource): number {
 }
 
 /** Mean of the target's resist over the hit's tags. */
-export function resistMean(resists: AspectResists, tags: readonly AspectTag[]): number {
-  if (tags.length === 0) {
-    return 0;
-  }
-  let total = 0;
-  for (const tag of tags) {
-    total += resists[tag] ?? 0;
-  }
-  return total / tags.length;
+export function resistMean(resists: AspectResists, tags: readonly Aspect[]): number {
+  return mean(tags.map((tag) => resists[tag] ?? 0));
 }
 
 export function rawDamage(damage: DamageScaling, powers: AttackerPowers): number {
@@ -139,7 +111,7 @@ export function applyProficiency(raw: number, prof: number): number {
 export function applyEffectBonus(
   raw: number,
   effectBonus: number,
-  tags: readonly AspectTag[],
+  tags: readonly Aspect[],
 ): number {
   return tags.length === 0 ? raw : raw * effectBonus;
 }
@@ -160,7 +132,7 @@ export function mitigation(targetDef: number, attackerLevel: number): number {
 /** Weight of the tagged share after counters and resist; 0 for an untagged hit. */
 export function aspectPart(
   p: number,
-  tags: readonly AspectTag[],
+  tags: readonly Aspect[],
   profile: AspectProfile,
   rbar: number,
 ): number {
@@ -188,17 +160,17 @@ export function applyPvpScale(
   attackerIsPlayer: boolean,
   targetIsPlayer: boolean,
 ): number {
-  return attackerIsPlayer && targetIsPlayer ? dmg * DAMAGE_K.PVP_SCALE : dmg;
+  return attackerIsPlayer && targetIsPlayer ? dmg * K.PVP_SCALE : dmg;
 }
 
 /** Random spread of a hit, uniform within plus or minus the variance. */
 export function varianceFactor(rng: Rng): number {
-  return 1 + (2 * rng.next() - 1) * DAMAGE_K.VAR;
+  return 1 + (2 * rng.next() - 1) * K.VAR;
 }
 
 /** Rounds the final damage; at least 1 unless the target is fully immune. */
 export function finalizeDamage(dmg: number, immune: boolean): number {
-  return immune ? 0 : Math.max(DAMAGE_K.MIN_HIT, Math.round(dmg));
+  return immune ? 0 : Math.max(K.DMG_MIN, Math.round(dmg));
 }
 
 export interface TargetModsInput {
@@ -214,10 +186,10 @@ export interface TargetModsInput {
 export function targetModsMult(input: TargetModsInput): number {
   let mult = 1;
   if (input.exposed === true) {
-    mult *= 1 + STATUS_DEFAULTS.exposed.magnitude;
+    mult *= 1 + STATUS_TABLE.exposed.magnitude;
   }
   if (input.weakened === true) {
-    mult *= 1 + STATUS_DEFAULTS.weaken.magnitude;
+    mult *= 1 + STATUS_TABLE.weaken.magnitude;
   }
   for (const factor of input.extra ?? []) {
     mult *= factor;

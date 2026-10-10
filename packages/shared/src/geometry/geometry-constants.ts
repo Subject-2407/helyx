@@ -1,14 +1,7 @@
 /**
- * Fixed facts the geometry helpers rely on. The collision grid values mirror how maps are
- * baked; they move to the shared network and type tables once those exist, and nothing
- * outside the geometry folder should import this file.
+ * Fixed facts the geometry helpers rely on. Nothing outside the geometry folder should import
+ * this file; collision cell sizes and kinds come from the shared network table and types.
  */
-
-/** Side of one collision grid cell in px. */
-export const SIGHT_CELL_PX = 8;
-
-/** Collision cell kind that blocks sight and projectiles. Water and low walls do not. */
-export const SIGHT_BLOCKING_CELL = 1;
 
 /** Number of distinct aim angles on the wire (a uint16 covers one full turn). */
 export const WIRE_ANGLE_STEPS = 65_536;

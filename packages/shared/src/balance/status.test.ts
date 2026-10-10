@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { STATUS_IDS, type Archetype, type StatusId } from '../types/combat.js';
 import golden from './__golden__/status.json' with { type: 'json' };
+import { POISE_HIT_DAMAGE, STATUS_TABLE } from './constants.js';
 import {
   applyPoiseDamage,
   applyStatus,
@@ -8,7 +10,6 @@ import {
   burnTickDamage,
   CC_DR_STATUSES,
   ccDiminish,
-  DEFAULT_POISE_DAMAGE,
   DEFAULT_STACKING_RULES,
   diminishesInPvp,
   dotTickCount,
@@ -16,17 +17,13 @@ import {
   playerPoise,
   poiseRegenDelayS,
   regenPoise,
-  STATUS_DEFAULTS,
-  STATUS_NAMES,
   statusDuration,
   type ActiveStatus,
   type CcDrState,
-  type PoiseArchetype,
-  type StatusName,
 } from './status.js';
 
 interface StatusRow {
-  readonly name: StatusName;
+  readonly name: StatusId;
   readonly magnitude: number;
   readonly durationS: number;
   readonly tickS?: number;
@@ -40,11 +37,11 @@ const ROWS = golden.statuses as readonly StatusRow[];
 
 describe('status defaults', () => {
   it('covers every status exactly once', () => {
-    expect(ROWS.map((row) => row.name).sort()).toEqual([...STATUS_NAMES].sort());
+    expect(ROWS.map((row) => row.name).sort()).toEqual([...STATUS_IDS].sort());
   });
 
   it.each(ROWS)('$name row', (row) => {
-    const defaults = STATUS_DEFAULTS[row.name];
+    const defaults = STATUS_TABLE[row.name];
     expect(defaults.magnitude).toBeCloseTo(row.magnitude, 4);
     expect(defaults.durationS).toBeCloseTo(row.durationS, 4);
     expect(defaults.stacking).toBe(row.stacking);
@@ -73,14 +70,14 @@ describe('status defaults', () => {
   });
 });
 
-function running(name: StatusName, magnitude: number, untilS: number, stacks = 1): ActiveStatus {
+function running(name: StatusId, magnitude: number, untilS: number, stacks = 1): ActiveStatus {
   return { name, magnitude, untilS, stacks };
 }
 
 describe('status stacking', () => {
   it('registers a rule for every stacking kind in use', () => {
-    for (const name of STATUS_NAMES) {
-      expect(DEFAULT_STACKING_RULES.has(STATUS_DEFAULTS[name].stacking)).toBe(true);
+    for (const name of STATUS_IDS) {
+      expect(DEFAULT_STACKING_RULES.has(STATUS_TABLE[name].stacking)).toBe(true);
     }
   });
 
@@ -151,9 +148,9 @@ describe('damage over time', () => {
   it('splits burn damage into half-second ticks', () => {
     const { hit, tickDamage, ticks, resistedTicks } = golden.burn;
     expect(burnTickDamage(hit)).toBeCloseTo(tickDamage, 4);
-    expect(dotTickCount(statusDuration('burn', 0), STATUS_DEFAULTS.burn.tickS ?? 0)).toBe(ticks);
+    expect(dotTickCount(statusDuration('burn', 0), STATUS_TABLE.burn.tickS ?? 0)).toBe(ticks);
     const shortened = statusDuration('burn', golden.resist);
-    expect(dotTickCount(shortened, STATUS_DEFAULTS.burn.tickS ?? 0)).toBe(resistedTicks);
+    expect(dotTickCount(shortened, STATUS_TABLE.burn.tickS ?? 0)).toBe(resistedTicks);
   });
 
   it('makes bleed hurt more per stack and while moving', () => {
@@ -208,12 +205,12 @@ describe('poise', () => {
   });
 
   it.each(golden.poise.archetypes)('$name archetype', ({ name, poise, regenS }) => {
-    expect(archetypePoise(name as PoiseArchetype)).toBe(poise);
+    expect(archetypePoise(name as Archetype)).toBe(poise);
     expect(poiseRegenDelayS(regenS > 2)).toBe(regenS);
   });
 
   it('uses the default poise damage per weapon kind', () => {
-    expect(DEFAULT_POISE_DAMAGE).toEqual(golden.poise.hits);
+    expect(POISE_HIT_DAMAGE).toEqual(golden.poise.hits);
   });
 
   it('breaks when poise runs out and refills at once', () => {

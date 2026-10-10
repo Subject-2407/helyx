@@ -3,12 +3,12 @@
  * kind has its own rule in a registry, so a new kind is added by registering a rule rather than
  * by editing a switch.
  */
-import type { StackingKind, StatusName } from './defaults.js';
-import { STATUS_DEFAULTS } from './defaults.js';
+import type { StatusId } from '../../types/combat.js';
+import { STATUS_TABLE, type StackingKind } from '../constants.js';
 
 /** One status currently running on a target. Times are seconds on the room clock. */
 export interface ActiveStatus {
-  readonly name: StatusName;
+  readonly name: StatusId;
   readonly magnitude: number;
   readonly untilS: number;
   readonly stacks: number;
@@ -16,7 +16,7 @@ export interface ActiveStatus {
 
 /** A new application, with its duration already adjusted for status resist. */
 export interface StatusApplication {
-  readonly name: StatusName;
+  readonly name: StatusId;
   readonly magnitude: number;
   readonly durationS: number;
   readonly nowS: number;
@@ -44,8 +44,8 @@ function fresh(incoming: StatusApplication, stacks = 1): ActiveStatus {
   };
 }
 
-function maxStacksOf(name: StatusName): number {
-  return STATUS_DEFAULTS[name].maxStacks ?? 1;
+function maxStacksOf(name: StatusId): number {
+  return STATUS_TABLE[name].maxStacks ?? 1;
 }
 
 const refresh: StackingRule = (_running, incoming) => ({
@@ -96,7 +96,7 @@ export function applyStatus(
   incoming: StatusApplication,
   rules: ReadonlyMap<StackingKind, StackingRule> = DEFAULT_STACKING_RULES,
 ): StackingOutcome {
-  const kind = STATUS_DEFAULTS[incoming.name].stacking;
+  const kind = STATUS_TABLE[incoming.name].stacking;
   const rule = rules.get(kind);
   if (rule === undefined) {
     throw new Error(`no stacking rule is registered for ${kind}`);

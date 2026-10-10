@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { hasLineOfSight, raycastGrid, type SightGrid } from './raycast.js';
+import type { CollisionGrid } from '../types/movement.js';
+import { hasLineOfSight, raycastGrid } from './raycast.js';
 
 const FREE = 0;
 const SOLID = 1;
@@ -8,7 +9,7 @@ const LOW_WALL = 3;
 const CELL = 8;
 
 /** A 10 × 10 cell grid (80 × 80 px) with the listed cells set to a collision kind. */
-function grid(marks: readonly (readonly [number, number, number])[] = []): SightGrid {
+function grid(marks: readonly (readonly [number, number, number])[] = []): CollisionGrid {
   const w8 = 10;
   const h8 = 10;
   const cells = new Uint8Array(w8 * h8).fill(FREE);

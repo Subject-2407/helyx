@@ -2,7 +2,7 @@
  * Damage over time from burn and bleed. These return unrounded amounts; each tick then goes
  * through the damage pipeline as a tick that can never crit.
  */
-import { STATUS_K } from './defaults.js';
+import { K } from '../constants.js';
 
 /** Small slack so a duration that is a whole number of ticks is not lost to float error. */
 const TICK_EPSILON = 1e-9;
@@ -27,17 +27,17 @@ export function dotTickCount(durationS: number, tickS: number): number {
  */
 export function burnTickDamage(hitDamage: number): number {
   assertDamage(hitDamage);
-  return (hitDamage * STATUS_K.BURN_FRACTION * STATUS_K.BURN_TICK_S) / STATUS_K.BURN_DURATION_S;
+  return (hitDamage * K.BURN_FRACTION * K.BURN_TICK_S) / K.BURN_DURATION_S;
 }
 
 /** Damage of one bleed tick for the given stacks; it hurts more while the target moves. */
 export function bleedTickDamage(hitDamage: number, stacks: number, moving: boolean): number {
   assertDamage(hitDamage);
-  if (!Number.isInteger(stacks) || stacks < 1 || stacks > STATUS_K.BLEED_MAX_STACKS) {
+  if (!Number.isInteger(stacks) || stacks < 1 || stacks > K.BLEED_MAX_STACKS) {
     throw new RangeError(
-      `bleed stacks must be a whole number from 1 to ${STATUS_K.BLEED_MAX_STACKS}, got ${stacks}`,
+      `bleed stacks must be a whole number from 1 to ${K.BLEED_MAX_STACKS}, got ${stacks}`,
     );
   }
-  const motion = moving ? STATUS_K.BLEED_MOVING_MULT : 1;
-  return hitDamage * STATUS_K.BLEED_FRACTION * stacks * motion;
+  const motion = moving ? K.BLEED_MOVING_MULT : 1;
+  return hitDamage * K.BLEED_FRACTION * stacks * motion;
 }

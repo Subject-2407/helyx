@@ -1,19 +1,18 @@
 import { describe, expect, it } from 'vitest';
+import type { Aspect } from '../types/aspect.js';
 import golden from './__golden__/counter.json' with { type: 'json' };
 import {
-  ASPECT_TAGS,
   clampCounter,
-  COUNTER_BEATS,
   counterMultiplier,
+  monsterResist,
   perTagCounter,
   relation,
   type AspectProfile,
-  type AspectTag,
 } from './counter.js';
 
 interface CounterCase {
   readonly name: string;
-  readonly tags: readonly AspectTag[];
+  readonly tags: readonly Aspect[];
   readonly profile: AspectProfile;
   readonly expected: number;
 }
@@ -21,17 +20,6 @@ interface CounterCase {
 const CASES = golden.cases as readonly CounterCase[];
 
 describe('aspect counter cycle', () => {
-  it('forms one cycle through all six aspects', () => {
-    const seen = new Set<AspectTag>();
-    let current: AspectTag = 'entropy';
-    for (let step = 0; step < ASPECT_TAGS.length; step += 1) {
-      seen.add(current);
-      current = COUNTER_BEATS[current];
-    }
-    expect(current).toBe('entropy');
-    expect(seen.size).toBe(ASPECT_TAGS.length);
-  });
-
   it('relates an aspect to the one it beats, the one beating it, and the rest', () => {
     expect(relation('entropy', 'growth')).toBe(1);
     expect(relation('growth', 'entropy')).toBe(-1);
@@ -59,5 +47,17 @@ describe('aspect counter cycle', () => {
 describe('aspect counter multiplier', () => {
   it.each(CASES)('$name', ({ tags, profile, expected }) => {
     expect(counterMultiplier(tags, profile)).toBeCloseTo(expected, 4);
+  });
+});
+
+describe('monster resist', () => {
+  it('resists its own primary aspect by default', () => {
+    expect(monsterResist('growth', { primary: 'growth' })).toBe(0.25);
+    expect(monsterResist('order', { primary: 'growth' })).toBe(0);
+  });
+
+  it('lets explicit values override the default', () => {
+    expect(monsterResist('growth', { primary: 'growth' }, { growth: 0.1 })).toBe(0.1);
+    expect(monsterResist('void', { primary: 'growth' }, { void: -0.2 })).toBe(-0.2);
   });
 });

@@ -3,27 +3,8 @@
  * dashing. Tiers are 0 normal, 1 burdened, 2 heavily burdened and 3 overloaded.
  */
 
-export type EncumbranceTier = 0 | 1 | 2 | 3;
-
-interface EncumbranceBand {
-  readonly tier: EncumbranceTier;
-  /** Highest weight-to-capacity ratio inside the band, inclusive. */
-  readonly maxRatio: number;
-  readonly moveMult: number;
-  /** Dash stamina cost multiplier, or null when dashing is not allowed. */
-  readonly dashCostMult: number | null;
-}
-
-/**
- * The bands, lightest first. They mirror the shared rule table and move there once that table
- * exists; nothing outside this module should import them.
- */
-const ENCUMBRANCE_BANDS: readonly EncumbranceBand[] = Object.freeze([
-  { tier: 0, maxRatio: 1.0, moveMult: 1, dashCostMult: 1 },
-  { tier: 1, maxRatio: 1.25, moveMult: 0.8, dashCostMult: 1.5 },
-  { tier: 2, maxRatio: 1.5, moveMult: 0.5, dashCostMult: null },
-  { tier: 3, maxRatio: Number.POSITIVE_INFINITY, moveMult: 0, dashCostMult: null },
-] as const);
+import type { EncumbranceTier } from '../types/combat.js';
+import { ENCUMBRANCE_BANDS, type EncumbranceBand } from './constants.js';
 
 export interface EncumbranceEffects {
   readonly ratio: number;

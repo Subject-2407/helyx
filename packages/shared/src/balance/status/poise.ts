@@ -3,82 +3,24 @@
  * Poise comes back in full once the character has gone long enough without poise damage.
  */
 
-/**
- * Tuning values for poise. They mirror the shared balance table and move there once that table
- * exists; nothing outside the status modules should import them.
- */
-const POISE_K = Object.freeze({
-  POISE_PLAYER_BASE: 30,
-  POISE_BODY_ARMOR_MAX: 40,
-  POISE_REGEN_DELAY_S: 2,
-  POISE_BOSS_REGEN_DELAY_S: 4,
-  POISE_HIT_BASIC: 10,
-  POISE_HIT_DAGGER: 6,
-  POISE_HIT_GREATSWORD: 25,
-  POISE_HIT_BOW_CHARGED: 20,
-} as const);
-
-/** Monster archetypes as far as poise is concerned. Boss values are per boss phase. */
-export type PoiseArchetype =
-  | 'fodder'
-  | 'standard'
-  | 'skirmisher'
-  | 'caster'
-  | 'brute'
-  | 'elite'
-  | 'instance_boss'
-  | 'trial_boss'
-  | 'boss';
-
-interface ArchetypePoise {
-  readonly poise: number;
-  readonly isBoss: boolean;
-}
-
-export const ARCHETYPE_POISE: Readonly<Record<PoiseArchetype, ArchetypePoise>> = Object.freeze({
-  fodder: { poise: 10, isBoss: false },
-  standard: { poise: 30, isBoss: false },
-  skirmisher: { poise: 25, isBoss: false },
-  caster: { poise: 20, isBoss: false },
-  brute: { poise: 80, isBoss: false },
-  elite: { poise: 150, isBoss: false },
-  instance_boss: { poise: 300, isBoss: true },
-  trial_boss: { poise: 250, isBoss: true },
-  boss: { poise: 400, isBoss: true },
-});
-
-/** Default poise damage of a basic hit by weapon kind; abilities set their own. */
-export type PoiseHitKind = 'basic' | 'dagger' | 'greatsword' | 'bow_charged';
-
-export const DEFAULT_POISE_DAMAGE: Readonly<Record<PoiseHitKind, number>> = Object.freeze({
-  basic: POISE_K.POISE_HIT_BASIC,
-  dagger: POISE_K.POISE_HIT_DAGGER,
-  greatsword: POISE_K.POISE_HIT_GREATSWORD,
-  bow_charged: POISE_K.POISE_HIT_BOW_CHARGED,
-});
+import type { Archetype } from '../../types/combat.js';
+import { ARCHETYPE_TABLE, K } from '../constants.js';
+import { assertInRange } from '../guards.js';
 
 /** Player poise: a fixed base plus what the body armor adds. */
 export function playerPoise(bodyArmorPoise: number): number {
-  if (
-    !Number.isFinite(bodyArmorPoise) ||
-    bodyArmorPoise < 0 ||
-    bodyArmorPoise > POISE_K.POISE_BODY_ARMOR_MAX
-  ) {
-    throw new RangeError(
-      `body armor poise must be between 0 and ${POISE_K.POISE_BODY_ARMOR_MAX}, got ${bodyArmorPoise}`,
-    );
-  }
-  return POISE_K.POISE_PLAYER_BASE + bodyArmorPoise;
+  assertInRange(bodyArmorPoise, 0, K.POISE_BODY_ARMOR_MAX, 'body armor poise');
+  return K.POISE_PLAYER_BASE + bodyArmorPoise;
 }
 
 /** Poise of a monster archetype (per phase for bosses). */
-export function archetypePoise(archetype: PoiseArchetype): number {
-  return ARCHETYPE_POISE[archetype].poise;
+export function archetypePoise(archetype: Archetype): number {
+  return ARCHETYPE_TABLE[archetype].poise;
 }
 
 /** Seconds without poise damage before poise refills; bosses wait longer. */
 export function poiseRegenDelayS(isBoss: boolean): number {
-  return isBoss ? POISE_K.POISE_BOSS_REGEN_DELAY_S : POISE_K.POISE_REGEN_DELAY_S;
+  return isBoss ? K.POISE_BOSS_REGEN_DELAY_S : K.POISE_REGEN_DELAY_S;
 }
 
 export interface PoiseState {

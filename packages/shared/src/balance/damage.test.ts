@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { SequenceRng, U32_MAX, unitFromU32, type Rng } from '../rng/rng.js';
+import { SequenceRng, U32_MAX, type Rng } from '../rng/rng.js';
+import { createSfc32 } from '../rng/sfc32.js';
+import { SEED_A } from '../testing/seeds.js';
+import type { Aspect } from '../types/aspect.js';
 import golden from './__golden__/damage.json' with { type: 'json' };
-import type { AspectProfile, AspectTag } from './counter.js';
+import type { AspectProfile } from './counter.js';
 import {
   applyCrit,
   applyEffectBonus,
@@ -25,33 +28,6 @@ import {
   type HitInput,
 } from './damage.js';
 
-/** Seed every randomized test in this package starts from, so failures replay exactly. */
-const SEED_A = 0x48454c59;
-
-/**
- * Small seeded sfc32 generator for this suite. The shared generator replaces it once the
- * package exposes one; the stream only needs to be deterministic and well spread here.
- */
-function sfc32(seed: number): Rng {
-  let a = 0x9e3779b9;
-  let b = 0x243f6a88;
-  let c = 0xb7e15162;
-  let d = seed >>> 0;
-  const nextU32 = (): number => {
-    const t = (((a + b) | 0) + d) | 0;
-    d = (d + 1) | 0;
-    a = b ^ (b >>> 9);
-    b = (c + (c << 3)) | 0;
-    c = (c << 21) | (c >>> 11);
-    c = (c + t) | 0;
-    return t >>> 0;
-  };
-  for (let round = 0; round < 12; round += 1) {
-    nextU32();
-  }
-  return { nextU32, next: () => unitFromU32(nextU32()) };
-}
-
 const CASE = golden.orderCase;
 const F = CASE.factors;
 
@@ -69,7 +45,7 @@ function orderInput(overrides: Partial<HitInput> = {}): HitInput {
     targetIsPlayer: true,
     targetDef: CASE.targetDef,
     p: CASE.p,
-    tags: CASE.tags as readonly AspectTag[],
+    tags: CASE.tags as readonly Aspect[],
     targetProfile: CASE.targetProfile as AspectProfile,
     targetResists: CASE.targetResists,
     targetMods: CASE.targetMods,
@@ -135,7 +111,7 @@ describe('damage pipeline', () => {
 
   it('keeps variance within five percent with a mean of one', () => {
     const { draws, min, max, mean, meanTolerance } = golden.variance;
-    const rng = sfc32(SEED_A);
+    const rng = createSfc32(SEED_A);
     let total = 0;
     let low = Infinity;
     let high = -Infinity;

@@ -1,15 +1,6 @@
-import { SIGHT_BLOCKING_CELL, SIGHT_CELL_PX } from './geometry-constants.js';
+import { NET } from '../net-constants.js';
+import { CollisionCell, type CollisionGrid } from '../types/movement.js';
 import type { GeoPoint } from './shapes/box.js';
-
-/**
- * A map's collision grid: `w8` × `h8` cells of 8 px, row-major, one collision kind per cell
- * (0 free, 1 solid, 2 water, 3 low wall).
- */
-export interface SightGrid {
-  w8: number;
-  h8: number;
-  cells: Uint8Array;
-}
 
 export interface GridCell {
   cx: number;
@@ -20,16 +11,16 @@ export type RaycastResult = { clear: true } | { clear: false; hitCell: GridCell 
 
 const CLEAR: RaycastResult = Object.freeze({ clear: true });
 
-function inBounds(grid: SightGrid, cx: number, cy: number): boolean {
+function inBounds(grid: CollisionGrid, cx: number, cy: number): boolean {
   return cx >= 0 && cy >= 0 && cx < grid.w8 && cy < grid.h8;
 }
 
 /** Only solid cells block sight; water and low walls can be seen and shot across. */
-function blocksSight(grid: SightGrid, cx: number, cy: number): boolean {
-  return !inBounds(grid, cx, cy) || grid.cells[cy * grid.w8 + cx] === SIGHT_BLOCKING_CELL;
+function blocksSight(grid: CollisionGrid, cx: number, cy: number): boolean {
+  return !inBounds(grid, cx, cy) || grid.cells[cy * grid.w8 + cx] === CollisionCell.SOLID;
 }
 
-function validate(grid: SightGrid, from: GeoPoint, to: GeoPoint): void {
+function validate(grid: CollisionGrid, from: GeoPoint, to: GeoPoint): void {
   if (grid.cells.length !== grid.w8 * grid.h8) {
     throw new RangeError(`Collision grid has ${grid.cells.length} cells, expected w8 × h8`);
   }
@@ -39,12 +30,15 @@ function validate(grid: SightGrid, from: GeoPoint, to: GeoPoint): void {
 }
 
 function cellOf(p: GeoPoint): GridCell {
-  return { cx: Math.floor(p.x / SIGHT_CELL_PX), cy: Math.floor(p.y / SIGHT_CELL_PX) };
+  return {
+    cx: Math.floor(p.x / NET.COLLISION_CELL_PX),
+    cy: Math.floor(p.y / NET.COLLISION_CELL_PX),
+  };
 }
 
 /** Distance in px from `start` to the next cell boundary when moving in direction `step`. */
 function gapToBoundary(cell: number, step: number, start: number): number {
-  const boundary = (step > 0 ? cell + 1 : cell) * SIGHT_CELL_PX;
+  const boundary = (step > 0 ? cell + 1 : cell) * NET.COLLISION_CELL_PX;
   return Math.abs(boundary - start);
 }
 
@@ -88,7 +82,7 @@ function sameCell(a: GridCell, b: GridCell): boolean {
  * Boundary crossings are compared by cross-multiplication instead of accumulated ratios, so
  * corner hits are detected exactly for positions on the 1/64 px grid.
  */
-export function raycastGrid(grid: SightGrid, from: GeoPoint, to: GeoPoint): RaycastResult {
+export function raycastGrid(grid: CollisionGrid, from: GeoPoint, to: GeoPoint): RaycastResult {
   validate(grid, from, to);
   const start = cellOf(from);
   const end = cellOf(to);
@@ -123,6 +117,6 @@ export function raycastGrid(grid: SightGrid, from: GeoPoint, to: GeoPoint): Rayc
 }
 
 /** Whether `to` can be seen from `from` on the collision grid. */
-export function hasLineOfSight(grid: SightGrid, from: GeoPoint, to: GeoPoint): boolean {
+export function hasLineOfSight(grid: CollisionGrid, from: GeoPoint, to: GeoPoint): boolean {
   return raycastGrid(grid, from, to).clear;
 }
