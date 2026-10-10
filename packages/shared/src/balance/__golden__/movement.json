@@ -1,0 +1,38 @@
+{
+  "dashCost": [
+    { "name": "agility 5 unburdened", "agi": 5, "tier": 0, "expected": 24.75 },
+    { "name": "agility 5 burdened", "agi": 5, "tier": 1, "expected": 37.125 },
+    { "name": "agility 5 heavily burdened", "agi": 5, "tier": 2, "expected": null },
+    { "name": "agility 5 overloaded", "agi": 5, "tier": 3, "expected": null },
+    { "name": "agility 100 lowers the cost", "agi": 100, "tier": 0, "expected": 20 },
+    { "name": "agility 300 stays at the floor", "agi": 300, "tier": 0, "expected": 15 }
+  ],
+  "staminaRegen": { "agi": 5, "perS": 31, "delayS": 0.6 },
+  "dash": {
+    "speedPxS": 350,
+    "durationMs": 160,
+    "cooldownMs": 400,
+    "iframeMs": 140,
+    "staminaDelayMs": 600
+  },
+  "moveMult": {
+    "guard": 0.5,
+    "bow_draw": 0.7,
+    "windup": 0.5,
+    "active": 0.5,
+    "recovery": 1,
+    "none": 1
+  },
+  "block": {
+    "damageMult": 0.4,
+    "shieldDamageMult": 0.2,
+    "drainPerS": 4,
+    "hits": [
+      { "name": "small hit", "raw": 30, "maxHp": 120, "shield": false, "expected": 20 },
+      { "name": "small hit on a shield", "raw": 30, "maxHp": 120, "shield": true, "expected": 14 },
+      { "name": "hit for full health", "raw": 120, "maxHp": 120, "shield": false, "expected": 50 }
+    ],
+    "guardBreakStunS": 1
+  },
+  "parry": { "windowS": 0.16, "staggerS": 0.8, "exposedS": 2 }
+}

@@ -6,6 +6,7 @@ export * from './derived-stats.js';
 export * from './encumbrance.js';
 export * from './leveling.js';
 export * from './math.js';
+export * from './movement.js';
 export * from './proficiency.js';
 export * from './regen.js';
 export * from './status.js';
