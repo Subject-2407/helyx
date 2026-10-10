@@ -16,7 +16,6 @@ import {
   maxStamina,
   moveSpeed,
   statusResist,
-  syncGrowthMult,
   type CoreStats,
 } from './derived-stats.js';
 
@@ -166,12 +165,6 @@ describe('carry capacity', () => {
   it('grows with strength and vitality', () => {
     expect(carryCapacity(5, 5)).toBe(55);
     expect(carryCapacity(10, 8, 4)).toBe(72);
-  });
-});
-
-describe('mind growth multiplier', () => {
-  it.each(golden.growth)('$name', ({ int, wis, expected }) => {
-    expect(syncGrowthMult(int, wis)).toBeCloseTo(expected, 4);
   });
 });
 

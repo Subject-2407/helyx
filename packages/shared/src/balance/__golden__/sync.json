@@ -1,0 +1,22 @@
+{
+  "growth": [
+    {
+      "name": "starting mind",
+      "int": 5,
+      "wis": 5,
+      "expected": 1.225
+    },
+    {
+      "name": "trained mind",
+      "int": 50,
+      "wis": 50,
+      "expected": 3.25
+    },
+    {
+      "name": "devoted mind",
+      "int": 100,
+      "wis": 100,
+      "expected": 5.5
+    }
+  ]
+}

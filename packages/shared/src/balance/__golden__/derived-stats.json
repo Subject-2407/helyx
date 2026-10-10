@@ -2,7 +2,14 @@
   "starter": {
     "input": {
       "level": 1,
-      "stats": { "str": 5, "dex": 5, "agi": 5, "vit": 5, "int": 5, "wis": 5 },
+      "stats": {
+        "str": 5,
+        "dex": 5,
+        "agi": 5,
+        "vit": 5,
+        "int": 5,
+        "wis": 5
+      },
       "weaponAtk": 10
     },
     "expected": {
@@ -45,8 +52,18 @@
       "attackerLevel": 15,
       "expected": 0.0943
     },
-    { "name": "huge defense stops at the cap", "def": 10000, "attackerLevel": 1, "expected": 0.75 },
-    { "name": "no defense means no reduction", "def": 0, "attackerLevel": 50, "expected": 0 }
+    {
+      "name": "huge defense stops at the cap",
+      "def": 10000,
+      "attackerLevel": 1,
+      "expected": 0.75
+    },
+    {
+      "name": "no defense means no reduction",
+      "def": 0,
+      "attackerLevel": 50,
+      "expected": 0
+    }
   ],
   "caps": {
     "critChanceAtDex1000": 0.5,
@@ -56,19 +73,50 @@
     "statusResistAtWis1000": 0.4,
     "aspectResistAtSum2": 0.6
   },
-  "growth": [
-    { "name": "starting mind", "int": 5, "wis": 5, "expected": 1.225 },
-    { "name": "trained mind", "int": 50, "wis": 50, "expected": 3.25 },
-    { "name": "devoted mind", "int": 100, "wis": 100, "expected": 5.5 }
-  ],
   "swordBuild": [
-    { "name": "sword build at level 1", "level": 1, "str": 5, "weaponAtk": 10, "expected": 20 },
-    { "name": "sword build at level 8", "level": 8, "str": 19, "weaponAtk": 45, "expected": 83 },
-    { "name": "sword build at level 15", "level": 15, "str": 33, "weaponAtk": 84, "expected": 150 }
+    {
+      "name": "sword build at level 1",
+      "level": 1,
+      "str": 5,
+      "weaponAtk": 10,
+      "expected": 20
+    },
+    {
+      "name": "sword build at level 8",
+      "level": 8,
+      "str": 19,
+      "weaponAtk": 45,
+      "expected": 83
+    },
+    {
+      "name": "sword build at level 15",
+      "level": 15,
+      "str": 33,
+      "weaponAtk": 84,
+      "expected": 150
+    }
   ],
   "casterBuild": [
-    { "name": "caster build at level 1", "level": 1, "int": 5, "weaponApw": 10, "expected": 20 },
-    { "name": "caster build at level 8", "level": 8, "int": 19, "weaponApw": 45, "expected": 83 },
-    { "name": "caster build at level 15", "level": 15, "int": 33, "weaponApw": 71, "expected": 137 }
+    {
+      "name": "caster build at level 1",
+      "level": 1,
+      "int": 5,
+      "weaponApw": 10,
+      "expected": 20
+    },
+    {
+      "name": "caster build at level 8",
+      "level": 8,
+      "int": 19,
+      "weaponApw": 45,
+      "expected": 83
+    },
+    {
+      "name": "caster build at level 15",
+      "level": 15,
+      "int": 33,
+      "weaponApw": 71,
+      "expected": 137
+    }
   ]
 }
