@@ -1,0 +1,70 @@
+{
+  "cases": [
+    {
+      "name": "entropy against a growth creature",
+      "tags": ["entropy"],
+      "profile": { "primary": "growth" },
+      "expected": 1.3
+    },
+    {
+      "name": "entropy against growth with secondary order",
+      "tags": ["entropy"],
+      "profile": { "primary": "growth", "secondary": "order" },
+      "expected": 1.225
+    },
+    {
+      "name": "change and force against an order creature",
+      "tags": ["change", "force"],
+      "profile": { "primary": "order" },
+      "expected": 1.15
+    },
+    {
+      "name": "force against a void creature",
+      "tags": ["force"],
+      "profile": { "primary": "void" },
+      "expected": 0.85
+    },
+    {
+      "name": "physical against anything",
+      "tags": [],
+      "profile": { "primary": "order", "secondary": "force", "vulnerable": ["change"] },
+      "expected": 1.0
+    },
+    {
+      "name": "change against the lattice sentinel",
+      "tags": ["change"],
+      "profile": { "primary": "order", "secondary": "force", "vulnerable": ["change"] },
+      "expected": 1.425
+    },
+    {
+      "name": "change and force against the lattice sentinel",
+      "tags": ["change", "force"],
+      "profile": { "primary": "order", "secondary": "force", "vulnerable": ["change"] },
+      "expected": 1.2125
+    },
+    {
+      "name": "entropy against the old mossback",
+      "tags": ["entropy"],
+      "profile": { "primary": "growth", "secondary": "order", "vulnerable": ["entropy"] },
+      "expected": 1.425
+    },
+    {
+      "name": "advantage on both ranks with a weakness is capped",
+      "tags": ["entropy"],
+      "profile": { "primary": "growth", "secondary": "growth", "vulnerable": ["entropy"] },
+      "expected": 1.45
+    },
+    {
+      "name": "disadvantage on both ranks stays above the floor",
+      "tags": ["force"],
+      "profile": { "primary": "void", "secondary": "void" },
+      "expected": 0.775
+    },
+    {
+      "name": "same aspect is neutral",
+      "tags": ["order"],
+      "profile": { "primary": "order" },
+      "expected": 1.0
+    }
+  ]
+}

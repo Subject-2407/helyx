@@ -1,0 +1,73 @@
+{
+  "orderCase": {
+    "name": "aspect ability against a resisting creature",
+    "damage": { "base": 7.3, "atk": 0, "apw": 1.1 },
+    "powers": { "attackPower": 40, "aspectPower": 37 },
+    "prof": 3,
+    "effectBonus": 1.1035,
+    "modeMult": 1.25,
+    "critChance": 0.3,
+    "critDamage": 1.7,
+    "attackerLevel": 10,
+    "targetDef": 30,
+    "p": 1,
+    "tags": ["change", "force"],
+    "targetProfile": { "primary": "order" },
+    "targetResists": { "change": 0.1, "force": 0.3 },
+    "targetMods": 1.15,
+    "factors": {
+      "raw": 48,
+      "prof": 1.06,
+      "effect": 1.1035,
+      "mode": 1.25,
+      "crit": 1.7,
+      "mitigation": 0.8571428571,
+      "counter": 1.15,
+      "resist": 0.2,
+      "targetMods": 1.15,
+      "pvp": 0.6
+    }
+  },
+  "taggedPortion": [
+    { "name": "physical ability", "source": { "kind": "physical" }, "p": 0 },
+    { "name": "aspect ability", "source": { "kind": "aspect" }, "p": 1 },
+    { "name": "plain basic attack", "source": { "kind": "basic" }, "p": 0 },
+    {
+      "name": "grade one enchanted basic attack",
+      "source": { "kind": "basic", "enchantGrade": 1 },
+      "p": 0.2
+    },
+    {
+      "name": "grade two enchanted basic attack",
+      "source": { "kind": "basic", "enchantGrade": 2 },
+      "p": 0.35
+    },
+    {
+      "name": "grade three enchanted basic attack",
+      "source": { "kind": "basic", "enchantGrade": 3 },
+      "p": 0.5
+    },
+    { "name": "untagged monster attack", "source": { "kind": "monster", "tags": [] }, "p": 0 },
+    {
+      "name": "tagged monster attack",
+      "source": { "kind": "monster", "tags": ["growth"] },
+      "p": 1
+    },
+    {
+      "name": "partly tagged monster attack",
+      "source": { "kind": "monster", "tags": ["void"], "p": 0.4 },
+      "p": 0.4
+    }
+  ],
+  "variance": { "draws": 100000, "min": 0.95, "max": 1.05, "mean": 1, "meanTolerance": 0.001 },
+  "pvpScale": 0.6,
+  "heal": {
+    "base": 12,
+    "apw": 0.8,
+    "aspectPower": 30,
+    "prof": 1,
+    "effectBonus": 1.06,
+    "modeMult": 1,
+    "expected": 38
+  }
+}
