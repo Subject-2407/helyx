@@ -1,0 +1,54 @@
+name: Nightly
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+jobs:
+  netcode-fault:
+    name: netcode-fault
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Not enabled yet
+        run: echo "Network fault injection scenarios are not enabled yet."
+
+  load-short:
+    name: load-short
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Not enabled yet
+        run: echo "The short load test is not enabled yet."
+
+  soak-1h:
+    name: soak-1h
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Not enabled yet
+        run: echo "The one-hour soak test is not enabled yet."
+
+  security-abuse:
+    name: security-abuse
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Not enabled yet
+        run: echo "Security abuse scripts are not enabled yet."
+
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Not enabled yet
+        run: echo "Full-content end-to-end tests in Chromium and Firefox are not enabled yet."

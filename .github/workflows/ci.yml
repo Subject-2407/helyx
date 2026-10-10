@@ -1,0 +1,182 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  TURBO_TELEMETRY_DISABLED: '1'
+
+jobs:
+  install:
+    name: install
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install
+        uses: ./.github/actions/setup
+
+  lint:
+    name: lint
+    needs: install
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install
+        uses: ./.github/actions/setup
+
+      - name: Lint, format, module boundaries and repository guard
+        run: pnpm lint
+
+      # The pull request commits are checked against their real head, not the synthetic merge commit.
+      - name: Commit messages follow the convention
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: pnpm exec commitlint --from "$BASE_SHA" --to "$HEAD_SHA" --verbose
+
+      - name: Commit messages pass the repository guard
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: pnpm run --silent guard commits "$BASE_SHA..$HEAD_SHA"
+
+  typecheck:
+    name: typecheck
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@v5
+
+      - name: Install
+        uses: ./.github/actions/setup
+
+      - name: Type check
+        run: pnpm typecheck
+
+  test:
+    name: test
+    needs: typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out
+        uses: actions/checkout@v5
+
+      - name: Install
+        uses: ./.github/actions/setup
+
+      - name: Unit tests with coverage
+        run: pnpm test
+
+      - name: Coverage summary
+        if: ${{ !cancelled() && hashFiles('coverage/coverage-summary.json') != '' }}
+        run: |
+          node --input-type=module -e "
+          import { readFileSync, appendFileSync } from 'node:fs';
+          const { total } = JSON.parse(readFileSync('coverage/coverage-summary.json', 'utf8'));
+          const rows = ['lines', 'statements', 'functions', 'branches'].map(
+            (metric) => '| ' + metric + ' | ' + total[metric].pct + '% | ' + total[metric].covered + ' / ' + total[metric].total + ' |',
+          );
+          const table = ['### Unit test coverage', '', '| Metric | Covered | Count |', '| --- | --- | --- |', ...rows, ''];
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY, table.join('\n'));
+          "
+
+      - name: Upload coverage summary
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: coverage-summary
+          path: coverage/coverage-summary.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  content:
+    name: content
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Not enabled yet
+        run: echo "Content validation and balance suites are not enabled yet."
+
+  assets:
+    name: assets
+    needs: content
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Not enabled yet
+        run: echo "Asset validation is not enabled yet."
+
+  build:
+    name: build
+    needs: assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out
+        uses: actions/checkout@v5
+
+      - name: Install
+        uses: ./.github/actions/setup
+
+      - name: Build client and server
+        run: pnpm build
+
+  integration:
+    name: integration
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Not enabled yet
+        run: echo "Server integration tests are not enabled yet."
+
+  e2e:
+    name: e2e
+    needs: integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Not enabled yet
+        run: echo "End-to-end browser tests are not enabled yet."
+
+  visual:
+    name: visual
+    needs: integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Not enabled yet
+        run: echo "Visual regression tests are not enabled yet."
+
+  budgets:
+    name: budgets
+    needs: [e2e, visual]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Not enabled yet
+        run: echo "Bundle and asset size budgets are not enabled yet."
