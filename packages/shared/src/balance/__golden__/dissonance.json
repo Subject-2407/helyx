@@ -1,0 +1,53 @@
+{
+  "decay": {
+    "wis": 5,
+    "perS": 5.25,
+    "delayS": 1.5,
+    "outOfCombatPerS": 10.5,
+    "passiveMult": 1.05,
+    "passivePerS": 5.5125
+  },
+  "states": [
+    {
+      "value": 0,
+      "state": "calm"
+    },
+    {
+      "value": 49.9,
+      "state": "calm"
+    },
+    {
+      "value": 50,
+      "state": "strained"
+    },
+    {
+      "value": 69.9,
+      "state": "strained"
+    },
+    {
+      "value": 70,
+      "state": "distorted"
+    },
+    {
+      "value": 90,
+      "state": "fraying"
+    },
+    {
+      "value": 100,
+      "state": "unbound"
+    }
+  ],
+  "distortedDamageTaken": 1.1,
+  "misfire": {
+    "rate": 0.2,
+    "tolerance": 0.005,
+    "casts": 100000
+  },
+  "unbound": {
+    "maxHp": 284,
+    "staggerS": 2,
+    "hpLoss": 28,
+    "reset": 60
+  },
+  "clarityDraught": -30
+}

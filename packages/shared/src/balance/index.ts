@@ -3,6 +3,7 @@ export * from './constants.js';
 export * from './counter.js';
 export * from './damage.js';
 export * from './derived-stats.js';
+export * from './dissonance.js';
 export * from './encumbrance.js';
 export * from './leveling.js';
 export * from './math.js';
