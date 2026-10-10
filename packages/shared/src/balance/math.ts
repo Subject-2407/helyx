@@ -1,27 +1,31 @@
 /** Small numeric helpers the balance formulas share. */
 
 /**
- * Digits kept when cleaning float noise before a floor. Far finer than any stored precision,
- * far coarser than the error of a few float operations, so `0.29 * 100` floors to 29, not 28.
+ * Digits kept when cleaning float noise before rounding. Far finer than any stored precision,
+ * far coarser than the error of a few float operations, so `0.29 * 100` floors to 29 (not 28)
+ * and 0.0105 rounds to three decimals as 0.011.
  */
-const FLOOR_NOISE_DECIMALS = 6;
-const FLOOR_NOISE_SCALE = 10 ** FLOOR_NOISE_DECIMALS;
+const NOISE_DECIMALS = 6;
+const NOISE_SCALE = 10 ** NOISE_DECIMALS;
+
+function denoise(scaled: number): number {
+  return Math.round(scaled * NOISE_SCALE) / NOISE_SCALE;
+}
 
 export function clamp(x: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, x));
 }
 
-/** Rounds to `decimals` places, halves away from zero for positive numbers. */
+/** Rounds to `decimals` places, halves up, ignoring float noise next to a half. */
 export function roundTo(x: number, decimals: number): number {
   const scale = 10 ** decimals;
-  return Math.round(x * scale) / scale;
+  return Math.round(denoise(x * scale)) / scale;
 }
 
 /** Rounds down to `decimals` places, ignoring float noise just below a boundary. */
 export function floorTo(x: number, decimals: number): number {
   const scale = 10 ** decimals;
-  const scaled = Math.round(x * scale * FLOOR_NOISE_SCALE) / FLOOR_NOISE_SCALE;
-  return Math.floor(scaled) / scale;
+  return Math.floor(denoise(x * scale)) / scale;
 }
 
 export function sum(values: readonly number[]): number {

@@ -13,6 +13,7 @@ describe('balance math helpers', () => {
     expect(roundTo(25.79, 1)).toBe(25.8);
     expect(roundTo(0.0060025, 6)).toBe(0.006003);
     expect(roundTo(12.5, 0)).toBe(13);
+    expect(roundTo(0.0105, 3)).toBe(0.011);
   });
 
   it('floors to a number of decimals without float noise', () => {
