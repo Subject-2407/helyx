@@ -1,9 +1,9 @@
-import { U32_MAX } from '@helyx/shared';
+import { DIR8_VALUES, NET, U32_MAX } from '@helyx/shared';
 
 // Bounds the validators enforce on client messages. Anything outside them is rejected and counted.
 
 /** Number of button bits in an input frame; every button value is below 2^BUTTON_BITS. */
-const BUTTON_BITS = 15;
+const BUTTON_BITS = NET.BUTTON_BITS;
 
 /** Largest `uint16`, the range of a wire aim angle. */
 const U16_MAX = 0xffff;
@@ -11,23 +11,23 @@ const U16_MAX = 0xffff;
 export const INPUT_LIMITS = Object.freeze({
   /** Frames per input packet. */
   FRAMES_MIN: 1,
-  FRAMES_MAX: 4,
+  FRAMES_MAX: NET.INPUT_FRAMES_MAX,
   /** Frame sequence numbers and target entity ids are `uint32`. */
   SEQ_MAX: U32_MAX,
   TARGET_MAX: U32_MAX,
   /** Largest movement direction value (south-east). */
-  MOVE_MAX: 8,
+  MOVE_MAX: Math.max(...DIR8_VALUES),
   BUTTON_BITS,
   /** Largest button bitfield: all button bits set. */
   BUTTONS_MAX: 2 ** BUTTON_BITS - 1,
   /** Aim angle as a `uint16` fraction of a full turn. */
   AIM_MAX: U16_MAX,
   /** The view tick travels as `round(viewTick × VT_SCALE)` in a `uint32`. */
-  VT_SCALE: 100,
+  VT_SCALE: NET.INPUT_VT_SCALE,
   VT_MAX: U32_MAX,
   /** How far behind and ahead of the server tick a client may claim to be rendering. */
-  VT_PAST_TICKS: 40,
-  VT_FUTURE_TICKS: 2,
+  VT_PAST_TICKS: NET.INPUT_VT_PAST_TICKS,
+  VT_FUTURE_TICKS: NET.INPUT_VT_FUTURE_TICKS,
 } as const);
 
 export const CMD_LIMITS = Object.freeze({
