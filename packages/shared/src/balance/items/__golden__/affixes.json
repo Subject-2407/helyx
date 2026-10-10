@@ -1,0 +1,79 @@
+{
+  "defs": {
+    "aff_str": {
+      "id": "aff_str",
+      "kind": "flat",
+      "slots": ["weapon", "off_hand", "head", "body", "hands", "feet", "accessory"],
+      "a": 1,
+      "b": 0.15,
+      "c": 3,
+      "d": 0.3
+    },
+    "aff_crit": {
+      "id": "aff_crit",
+      "kind": "pct",
+      "slots": ["weapon", "accessory", "hands"],
+      "a": 0.01,
+      "b": 0.0005,
+      "c": 0.03,
+      "d": 0.001
+    },
+    "aff_max_hp": {
+      "id": "aff_max_hp",
+      "kind": "flat",
+      "slots": ["head", "body", "hands", "feet", "off_hand", "accessory"],
+      "a": 8,
+      "b": 1.5,
+      "c": 20,
+      "d": 3
+    },
+    "aff_sync_growth": {
+      "id": "aff_sync_growth",
+      "kind": "pct",
+      "slots": ["accessory"],
+      "a": 0.03,
+      "b": 0.0005,
+      "c": 0.06,
+      "d": 0.001,
+      "minRarity": 4
+    }
+  },
+  "ranges": [
+    {
+      "affix": "aff_str",
+      "ilvl": 1,
+      "min": 1,
+      "max": 3
+    },
+    {
+      "affix": "aff_str",
+      "ilvl": 10,
+      "min": 3,
+      "max": 6
+    },
+    {
+      "affix": "aff_str",
+      "ilvl": 15,
+      "min": 3,
+      "max": 8
+    },
+    {
+      "affix": "aff_crit",
+      "ilvl": 1,
+      "min": 0.011,
+      "max": 0.031
+    },
+    {
+      "affix": "aff_crit",
+      "ilvl": 10,
+      "min": 0.015,
+      "max": 0.04
+    },
+    {
+      "affix": "aff_crit",
+      "ilvl": 15,
+      "min": 0.018,
+      "max": 0.045
+    }
+  ]
+}

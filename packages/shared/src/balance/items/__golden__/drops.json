@@ -1,0 +1,45 @@
+{
+  "equipmentChance": {
+    "fodder": 0.02,
+    "standard": 0.05,
+    "skirmisher": 0.05,
+    "caster": 0.06,
+    "brute": 0.08
+  },
+  "rolls": 100000,
+  "tolerance": 0.01,
+  "eliteSecond": 0.25,
+  "worldBoss": [
+    {
+      "groups": 1,
+      "items": 4
+    },
+    {
+      "groups": 5,
+      "items": 8
+    },
+    {
+      "groups": 9,
+      "items": 12
+    },
+    {
+      "groups": 20,
+      "items": 12
+    }
+  ],
+  "instanceBoss": [
+    {
+      "party": 1,
+      "items": 3
+    },
+    {
+      "party": 4,
+      "items": 6
+    }
+  ],
+  "essence": {
+    "normal": 0.1,
+    "elite": 0.5,
+    "bossCount": 3
+  }
+}
