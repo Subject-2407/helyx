@@ -70,6 +70,15 @@ function longFunction(bodyLines: number): string {
   ].join('\n');
 }
 
+/** A file with the given number of code lines, each followed by a blank line and a comment. */
+function longFile(codeLines: number): string {
+  const lines = Array.from(
+    { length: codeLines },
+    (_, index) => `export const value${String(index)} = ${String(index)};\n\n// note`,
+  );
+  return `${lines.join('\n')}\n`;
+}
+
 function branchyFunction(decisionPoints: number): string {
   const branches = Array.from(
     { length: decisionPoints },
@@ -154,6 +163,22 @@ describe('lint rules', () => {
       );
 
       expect(SOLID_THRESHOLDS.maxLinesPerFunction).toBe(60);
+      expect(overMessages.map((m) => m.severity)).toEqual([WARN]);
+      expect(atLimitMessages).toEqual([]);
+    },
+    LINT_TIMEOUT_MS,
+  );
+
+  it(
+    'warns when a file grows past the length limit, not counting blanks and comments',
+    async () => {
+      const over = longFile(SOLID_THRESHOLDS.maxLinesPerFile + 1);
+      const atLimit = longFile(SOLID_THRESHOLDS.maxLinesPerFile);
+
+      const overMessages = byRule(await lint('apps/server/src/x.ts', over), 'max-lines');
+      const atLimitMessages = byRule(await lint('apps/server/src/x.ts', atLimit), 'max-lines');
+
+      expect(SOLID_THRESHOLDS.maxLinesPerFile).toBe(400);
       expect(overMessages.map((m) => m.severity)).toEqual([WARN]);
       expect(atLimitMessages).toEqual([]);
     },
