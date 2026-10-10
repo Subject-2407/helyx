@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "e2e": "playwright test",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
@@ -16,6 +17,7 @@
     "phaser": "3.90.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.59.1",
     "vite": "7.3.7"
   }
 }
