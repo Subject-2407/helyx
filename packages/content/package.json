@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@helyx/shared": "workspace:*"
+    "@helyx/shared": "workspace:*",
+    "zod": "4.6.5"
   }
 }
