@@ -1,0 +1,32 @@
+# Normalize text files to LF in the repository and in working trees
+* text=auto eol=lf
+
+# Files that break under CRLF (shell, hooks, containers) or must stay byte-stable
+*.sh text eol=lf
+.husky/* text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+Caddyfile text eol=lf
+*.Dockerfile text eol=lf
+Dockerfile text eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.ogg binary
+*.mp3 binary
+*.wav binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary

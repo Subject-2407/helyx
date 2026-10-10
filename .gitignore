@@ -1,0 +1,37 @@
+# no document files other than contributor READMEs
+*.md
+*.mdx
+*.docx
+*.doc
+*.pdf
+*.odt
+!README.md
+!**/README.md
+
+# dependencies
+node_modules/
+
+# build output
+dist/
+dist-listener/
+coverage/
+.turbo/
+*.tsbuildinfo
+
+# generated client assets and content bundle
+apps/client/public/assets/
+apps/client/public/content/
+packages/content/dist/
+
+# test and tooling reports
+reports/
+playwright-report/
+test-results/
+
+# logs
+*.log
+
+# local environment (secrets stay out of the repository)
+.env
+.env.*
+!.env.example
