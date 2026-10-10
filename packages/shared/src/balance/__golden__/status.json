@@ -1,0 +1,99 @@
+{
+  "resist": 0.25,
+  "statuses": [
+    {
+      "name": "burn",
+      "magnitude": 0.25,
+      "durationS": 3,
+      "tickS": 0.5,
+      "stacking": "refresh",
+      "resisted": 2.25
+    },
+    {
+      "name": "bleed",
+      "magnitude": 0.08,
+      "durationS": 4,
+      "tickS": 1,
+      "stacking": "stack",
+      "maxStacks": 3,
+      "resisted": 3
+    },
+    {
+      "name": "corrode",
+      "magnitude": -0.15,
+      "durationS": 5,
+      "stacking": "refresh",
+      "resisted": 3.75
+    },
+    { "name": "slow", "magnitude": -0.3, "durationS": 2, "stacking": "strongest", "resisted": 1.5 },
+    { "name": "root", "magnitude": 0, "durationS": 1.5, "stacking": "refresh", "resisted": 1.125 },
+    {
+      "name": "stun",
+      "magnitude": 0,
+      "durationS": 1.5,
+      "maxDurationS": 1.5,
+      "stacking": "no_refresh",
+      "resisted": 1.125
+    },
+    { "name": "knockback", "magnitude": 0, "durationS": 0, "stacking": "instant", "resisted": 0 },
+    { "name": "weaken", "magnitude": -0.15, "durationS": 4, "stacking": "refresh", "resisted": 3 },
+    {
+      "name": "exposed",
+      "magnitude": 0.15,
+      "durationS": 2,
+      "maxDurationS": 4,
+      "stacking": "refresh",
+      "resisted": 1.5
+    },
+    { "name": "mending", "magnitude": 0, "durationS": 5, "stacking": "refresh", "resisted": 5 },
+    { "name": "haste", "magnitude": 0.2, "durationS": 3, "stacking": "refresh", "resisted": 3 },
+    { "name": "fortify", "magnitude": 0.2, "durationS": 4, "stacking": "refresh", "resisted": 4 },
+    { "name": "dispelled", "magnitude": 0, "durationS": 0, "stacking": "instant", "resisted": 0 },
+    {
+      "name": "jarred",
+      "magnitude": 3,
+      "durationS": 4,
+      "tickS": 1,
+      "stacking": "refresh",
+      "resisted": 3
+    }
+  ],
+  "knockbackPushS": 0.15,
+  "burn": { "hit": 120, "tickDamage": 5, "ticks": 6, "resistedTicks": 4 },
+  "bleed": { "hit": 100, "still": 8, "moving": 12, "threeStacksMoving": 36 },
+  "diminishing": {
+    "chain": [
+      { "name": "first", "atS": 0, "mult": 1 },
+      { "name": "second", "atS": 1, "mult": 0.5 },
+      { "name": "third", "atS": 2, "mult": 0.25 },
+      { "name": "fourth while immune", "atS": 3, "mult": 0 },
+      { "name": "just before immunity ends", "atS": 11.99, "mult": 0 },
+      { "name": "after immunity ends", "atS": 12, "mult": 1 },
+      { "name": "second of the new window", "atS": 13, "mult": 0.5 }
+    ],
+    "expiring": [
+      { "name": "first", "atS": 0, "mult": 1 },
+      { "name": "inside the window", "atS": 9.99, "mult": 0.5 },
+      { "name": "window over", "atS": 19.99, "mult": 1 }
+    ],
+    "statuses": ["stun", "root", "slow"]
+  },
+  "poise": {
+    "player": [
+      { "name": "no body armor", "bodyArmor": 0, "poise": 30 },
+      { "name": "heavy body armor", "bodyArmor": 40, "poise": 70 }
+    ],
+    "archetypes": [
+      { "name": "fodder", "poise": 10, "regenS": 2 },
+      { "name": "standard", "poise": 30, "regenS": 2 },
+      { "name": "skirmisher", "poise": 25, "regenS": 2 },
+      { "name": "caster", "poise": 20, "regenS": 2 },
+      { "name": "brute", "poise": 80, "regenS": 2 },
+      { "name": "elite", "poise": 150, "regenS": 2 },
+      { "name": "instance_boss", "poise": 300, "regenS": 4 },
+      { "name": "trial_boss", "poise": 250, "regenS": 4 },
+      { "name": "boss", "poise": 400, "regenS": 4 }
+    ],
+    "hits": { "basic": 10, "dagger": 6, "greatsword": 25, "bow_charged": 20 }
+  }
+}

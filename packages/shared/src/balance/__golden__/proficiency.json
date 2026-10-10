@@ -1,0 +1,12 @@
+{
+  "levels": [
+    { "name": "first level", "prof": 1, "damageMult": 1.0, "costMult": 1.0, "xpToNext": 20 },
+    { "name": "second level", "prof": 2, "damageMult": 1.03, "costMult": 0.98, "xpToNext": 40 },
+    { "name": "fifth level", "prof": 5, "damageMult": 1.12, "costMult": 0.92, "xpToNext": 100 },
+    { "name": "ninth level", "prof": 9, "damageMult": 1.24, "costMult": 0.84, "xpToNext": 180 },
+    { "name": "highest level", "prof": 10, "damageMult": 1.27, "costMult": 0.82, "xpToNext": null }
+  ],
+  "totalXpToMax": 900,
+  "maxLevel": 10,
+  "useCooldownS": 1.5
+}
