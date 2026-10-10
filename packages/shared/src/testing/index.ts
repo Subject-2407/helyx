@@ -2,3 +2,4 @@
 // port, wherever it lives, runs the matching suite in its own tests.
 export { describeClockContract } from './clock-contract.js';
 export { describeRngContract } from './rng-contract.js';
+export { SEED_A, SEED_B, SEED_C } from './seeds.js';
