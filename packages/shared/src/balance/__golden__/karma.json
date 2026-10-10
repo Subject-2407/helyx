@@ -1,0 +1,53 @@
+{
+  "killInnocent": {
+    "delta": -100,
+    "outlawAt": -100
+  },
+  "monsterKill": {
+    "delta": 1,
+    "levelWindow": 5
+  },
+  "quest": {
+    "delta": 5
+  },
+  "atonement": {
+    "delta": 10,
+    "costPerLevel": 25,
+    "samples": [
+      {
+        "level": 1,
+        "cost": 25
+      },
+      {
+        "level": 10,
+        "cost": 250
+      },
+      {
+        "level": 15,
+        "cost": 375
+      }
+    ]
+  },
+  "bounty": {
+    "samples": [
+      {
+        "level": 1,
+        "coins": 50
+      },
+      {
+        "level": 12,
+        "coins": 600
+      }
+    ],
+    "cooldownS": 600
+  },
+  "range": {
+    "min": -1000,
+    "max": 100
+  },
+  "bracket": {
+    "allowed": 8,
+    "refused": 9
+  },
+  "aggressorS": 120
+}
