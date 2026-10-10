@@ -7,6 +7,20 @@
     "node": ">=24 <25",
     "pnpm": ">=10 <11"
   },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "typecheck": "turbo run typecheck",
+    "test": "vitest run --coverage",
+    "test:e2e": "pnpm --filter @helyx/client run e2e",
+    "lint": "eslint . --max-warnings 0 && prettier --check . --ignore-path .gitignore --ignore-path .prettierignore --ignore-path .prettierignore.local && pnpm run depcruise && pnpm run guard tracked",
+    "format": "prettier --write . --ignore-path .gitignore --ignore-path .prettierignore --ignore-path .prettierignore.local",
+    "depcruise": "depcruise apps packages tools --config .dependency-cruiser.cjs",
+    "guard": "tsx tools/repo-guard/src/cli.ts",
+    "content:validate": "pnpm --filter @helyx/content-cli run validate",
+    "assets:validate": "pnpm --filter @helyx/asset-pipeline run validate",
+    "prepare": "husky"
+  },
   "devDependencies": {
     "@commitlint/cli": "21.2.3",
     "@commitlint/config-conventional": "21.2.3",
