@@ -1,0 +1,74 @@
+{
+  "starter": {
+    "input": {
+      "level": 1,
+      "stats": { "str": 5, "dex": 5, "agi": 5, "vit": 5, "int": 5, "wis": 5 },
+      "weaponAtk": 10
+    },
+    "expected": {
+      "maxHp": 120,
+      "maxMana": 60,
+      "maxStamina": 105,
+      "attackPower": 20,
+      "aspectPower": 10,
+      "defense": 2.5,
+      "critChance": 0.0625,
+      "critDamage": 1.5,
+      "attackSpeed": 1.02,
+      "moveSpeed": 81.2,
+      "statusResist": 0.015,
+      "carryCapacity": 55
+    }
+  },
+  "damageReduction": [
+    {
+      "name": "defense 30 against a level 10 attacker",
+      "def": 30,
+      "attackerLevel": 10,
+      "expected": 0.142857
+    },
+    {
+      "name": "standard level 1 monster against a level 1 player",
+      "def": 4,
+      "attackerLevel": 1,
+      "expected": 0.0526
+    },
+    {
+      "name": "standard level 8 monster against a level 8 player",
+      "def": 14,
+      "attackerLevel": 8,
+      "expected": 0.0824
+    },
+    {
+      "name": "standard level 15 monster against a level 15 player",
+      "def": 25,
+      "attackerLevel": 15,
+      "expected": 0.0943
+    },
+    { "name": "huge defense stops at the cap", "def": 10000, "attackerLevel": 1, "expected": 0.75 },
+    { "name": "no defense means no reduction", "def": 0, "attackerLevel": 50, "expected": 0 }
+  ],
+  "caps": {
+    "critChanceAtDex1000": 0.5,
+    "attackSpeedAtDex1000": 1.5,
+    "moveSpeedAtAgi1000": 112,
+    "critDamageWithAffix5": 3,
+    "statusResistAtWis1000": 0.4,
+    "aspectResistAtSum2": 0.6
+  },
+  "growth": [
+    { "name": "starting mind", "int": 5, "wis": 5, "expected": 1.225 },
+    { "name": "trained mind", "int": 50, "wis": 50, "expected": 3.25 },
+    { "name": "devoted mind", "int": 100, "wis": 100, "expected": 5.5 }
+  ],
+  "swordBuild": [
+    { "name": "sword build at level 1", "level": 1, "str": 5, "weaponAtk": 10, "expected": 20 },
+    { "name": "sword build at level 8", "level": 8, "str": 19, "weaponAtk": 45, "expected": 83 },
+    { "name": "sword build at level 15", "level": 15, "str": 33, "weaponAtk": 84, "expected": 150 }
+  ],
+  "casterBuild": [
+    { "name": "caster build at level 1", "level": 1, "int": 5, "weaponApw": 10, "expected": 20 },
+    { "name": "caster build at level 8", "level": 8, "int": 19, "weaponApw": 45, "expected": 83 },
+    { "name": "caster build at level 15", "level": 15, "int": 33, "weaponApw": 71, "expected": 137 }
+  ]
+}
