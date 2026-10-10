@@ -1,0 +1,318 @@
+{
+  "config": { "epochMs": 1767225600000, "offsetMs": 0, "seasonLengthDays": 7 },
+  "rows": [
+    {
+      "name": "the epoch starts at midnight",
+      "serverNowMs": 1767225600000,
+      "expected": {
+        "gameMs": 0,
+        "hour": 0,
+        "minute": 0,
+        "phase": "night",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "one real second is thirty game seconds",
+      "serverNowMs": 1767225601000,
+      "expected": {
+        "gameMs": 30000,
+        "hour": 0,
+        "minute": 0,
+        "phase": "night",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "two real minutes is one game hour",
+      "serverNowMs": 1767225720000,
+      "expected": {
+        "gameMs": 3600000,
+        "hour": 1,
+        "minute": 0,
+        "phase": "night",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "the last real millisecond of a game day",
+      "serverNowMs": 1767228479999,
+      "expected": {
+        "gameMs": 86399970,
+        "hour": 23,
+        "minute": 59,
+        "phase": "night",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "forty-eight real minutes starts the next game day",
+      "serverNowMs": 1767228480000,
+      "expected": {
+        "gameMs": 86400000,
+        "hour": 0,
+        "minute": 0,
+        "phase": "night",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "one minute before dawn",
+      "serverNowMs": 1767226198000,
+      "expected": {
+        "gameMs": 17940000,
+        "hour": 4,
+        "minute": 59,
+        "phase": "night",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "dawn starts at five",
+      "serverNowMs": 1767226200000,
+      "expected": {
+        "gameMs": 18000000,
+        "hour": 5,
+        "minute": 0,
+        "phase": "dawn",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "one minute before day",
+      "serverNowMs": 1767226438000,
+      "expected": {
+        "gameMs": 25140000,
+        "hour": 6,
+        "minute": 59,
+        "phase": "dawn",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "day starts at seven",
+      "serverNowMs": 1767226440000,
+      "expected": {
+        "gameMs": 25200000,
+        "hour": 7,
+        "minute": 0,
+        "phase": "day",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "one minute before dusk",
+      "serverNowMs": 1767227758000,
+      "expected": {
+        "gameMs": 64740000,
+        "hour": 17,
+        "minute": 59,
+        "phase": "day",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "dusk starts at eighteen",
+      "serverNowMs": 1767227760000,
+      "expected": {
+        "gameMs": 64800000,
+        "hour": 18,
+        "minute": 0,
+        "phase": "dusk",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "one minute before night",
+      "serverNowMs": 1767227998000,
+      "expected": {
+        "gameMs": 71940000,
+        "hour": 19,
+        "minute": 59,
+        "phase": "dusk",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "night starts at twenty",
+      "serverNowMs": 1767228000000,
+      "expected": {
+        "gameMs": 72000000,
+        "hour": 20,
+        "minute": 0,
+        "phase": "night",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "last moment of the first spring",
+      "serverNowMs": 1767830399999,
+      "expected": {
+        "gameMs": 18143999970,
+        "hour": 23,
+        "minute": 59,
+        "phase": "night",
+        "dayOfSeason": 7,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "summer starts on real day seven",
+      "serverNowMs": 1767830400000,
+      "expected": {
+        "gameMs": 18144000000,
+        "hour": 0,
+        "minute": 0,
+        "phase": "night",
+        "dayOfSeason": 1,
+        "season": "summer",
+        "seasonIndex": 1
+      }
+    },
+    {
+      "name": "fourth day of summer",
+      "serverNowMs": 1768132800000,
+      "expected": {
+        "gameMs": 27216000000,
+        "hour": 0,
+        "minute": 0,
+        "phase": "night",
+        "dayOfSeason": 4,
+        "season": "summer",
+        "seasonIndex": 1
+      }
+    },
+    {
+      "name": "autumn starts on real day fourteen",
+      "serverNowMs": 1768435200000,
+      "expected": {
+        "gameMs": 36288000000,
+        "hour": 0,
+        "minute": 0,
+        "phase": "night",
+        "dayOfSeason": 1,
+        "season": "autumn",
+        "seasonIndex": 2
+      }
+    },
+    {
+      "name": "winter starts on real day twenty-one",
+      "serverNowMs": 1769040000000,
+      "expected": {
+        "gameMs": 54432000000,
+        "hour": 0,
+        "minute": 0,
+        "phase": "night",
+        "dayOfSeason": 1,
+        "season": "winter",
+        "seasonIndex": 3
+      }
+    },
+    {
+      "name": "spring returns on real day twenty-eight",
+      "serverNowMs": 1769644800000,
+      "expected": {
+        "gameMs": 72576000000,
+        "hour": 0,
+        "minute": 0,
+        "phase": "night",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "a forward offset moves the clock to dawn",
+      "serverNowMs": 1767225600000,
+      "offsetMs": 600000,
+      "expected": {
+        "gameMs": 18000000,
+        "hour": 5,
+        "minute": 0,
+        "phase": "dawn",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "a backward offset moves the clock back to dawn",
+      "serverNowMs": 1767226440000,
+      "offsetMs": -240000,
+      "expected": {
+        "gameMs": 18000000,
+        "hour": 5,
+        "minute": 0,
+        "phase": "dawn",
+        "dayOfSeason": 1,
+        "season": "spring",
+        "seasonIndex": 0
+      }
+    },
+    {
+      "name": "an offset of seven real days also moves the season",
+      "serverNowMs": 1767225600000,
+      "offsetMs": 604800000,
+      "expected": {
+        "gameMs": 18144000000,
+        "hour": 0,
+        "minute": 0,
+        "phase": "night",
+        "dayOfSeason": 1,
+        "season": "summer",
+        "seasonIndex": 1
+      }
+    },
+    {
+      "name": "a three-day season ends after three real days",
+      "serverNowMs": 1767484800000,
+      "seasonLengthDays": 3,
+      "expected": {
+        "gameMs": 7776000000,
+        "hour": 0,
+        "minute": 0,
+        "phase": "night",
+        "dayOfSeason": 1,
+        "season": "summer",
+        "seasonIndex": 1
+      }
+    }
+  ],
+  "utcDays": [
+    { "name": "the unix epoch is day zero", "ms": 0, "expected": 0 },
+    { "name": "the last millisecond of the first utc day", "ms": 86399999, "expected": 0 },
+    {
+      "name": "the last millisecond of the first day of 2026",
+      "ms": 1767311999999,
+      "expected": 20454
+    },
+    { "name": "midnight utc starts the next day", "ms": 1767312000000, "expected": 20455 }
+  ]
+}
