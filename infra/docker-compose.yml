@@ -1,0 +1,167 @@
+# Full stack on one host. From the repository root:
+#   docker compose --env-file .env -f infra/docker-compose.yml up -d --build
+# Only Caddy publishes ports; every other service is reachable on the internal network only.
+name: helyx
+
+x-logging: &logging
+  driver: local
+  options:
+    max-size: 50m
+    max-file: '5'
+
+x-server-image: &server-image
+  image: helyx-server:${IMAGE_TAG:-local}
+  build:
+    context: ..
+    dockerfile: infra/server.Dockerfile
+
+x-server-env: &server-env
+  # The containers reach the data services by service name, whatever the .env file says
+  # for running on the host. Keep the database password URL-safe.
+  DATABASE_URL: postgres://${POSTGRES_USER:-helyx}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-helyx}
+  REDIS_URL: redis://redis:6379
+  PORT: '2567'
+  WORKER_HEALTH_PORT: '2568'
+
+services:
+  caddy:
+    image: helyx-caddy:${IMAGE_TAG:-local}
+    build:
+      context: ..
+      dockerfile: infra/caddy.Dockerfile
+      args:
+        VITE_PUBLIC_URL: ${VITE_PUBLIC_URL:-}
+        VITE_ENABLE_LAGSIM: ${VITE_ENABLE_LAGSIM:-false}
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL}
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      server:
+        condition: service_started
+    healthcheck:
+      # The admin API binds IPv4 loopback only, while "localhost" may resolve to IPv6 first.
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', '-T', '4', 'http://127.0.0.1:2019/config/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks: [helyx]
+    restart: unless-stopped
+    logging: *logging
+
+  server:
+    <<: *server-image
+    env_file:
+      - path: ../.env
+        required: false
+    environment:
+      <<: *server-env
+      ROLE: game
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', '-T', '4', 'http://127.0.0.1:2567/readyz']
+      interval: 15s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+    networks: [helyx]
+    restart: unless-stopped
+    logging: *logging
+
+  worker:
+    <<: *server-image
+    env_file:
+      - path: ../.env
+        required: false
+    environment:
+      <<: *server-env
+      ROLE: worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', '-T', '4', 'http://127.0.0.1:2568/readyz']
+      interval: 15s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+    networks: [helyx]
+    restart: unless-stopped
+    logging: *logging
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-helyx}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-helyx}
+    # WAL archiving stays switched on so the backup service can take over the archive command
+    # later; until then segments are acknowledged and recycled instead of piling up on disk.
+    command:
+      - postgres
+      - -c
+      - shared_buffers=1GB
+      - -c
+      - max_connections=100
+      - -c
+      - wal_level=replica
+      - -c
+      - archive_mode=on
+      - -c
+      - archive_command=/bin/true
+    shm_size: 256mb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [helyx]
+    restart: unless-stopped
+    logging: *logging
+
+  redis:
+    image: redis:7.4-alpine
+    command:
+      - redis-server
+      - --appendonly
+      - 'yes'
+      - --appendfsync
+      - everysec
+      - --maxmemory
+      - 512mb
+      - --maxmemory-policy
+      - noeviction
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [helyx]
+    restart: unless-stopped
+    logging: *logging
+
+networks:
+  helyx:
+    name: helyx
+
+volumes:
+  caddy_data:
+  caddy_config:
+  pgdata:
+  redisdata:

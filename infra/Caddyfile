@@ -1,0 +1,61 @@
+{
+	email {$ACME_EMAIL}
+}
+
+# A localhost site gets a certificate from Caddy's own local authority; any public domain gets
+# one from the ACME provider.
+{$DOMAIN:localhost} {
+	encode zstd gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	# Metrics are scraped on the internal network only and are never exposed publicly.
+	@metrics path /metrics /metrics/*
+	handle @metrics {
+		respond 404
+	}
+
+	@backend path /api/* /matchmake/* /healthz /readyz
+	handle @backend {
+		reverse_proxy server:2567
+	}
+
+	@websocket header Connection *Upgrade*
+	handle @websocket {
+		reverse_proxy server:2567
+	}
+
+	# Content bundles and art carry a 12-hex content hash in their file name, so a cached copy
+	# can never go stale. The manifests that point at them must always be revalidated.
+	@hashed path_regexp hashed \.[0-9a-f]{12}\.[^/]+$
+	@manifest path */manifest.json
+
+	handle /content/* {
+		root * /srv
+		header @hashed Cache-Control "public, max-age=31536000, immutable"
+		header @manifest Cache-Control "no-cache"
+		file_server
+	}
+
+	handle /assets/* {
+		root * /srv/client
+		header @hashed Cache-Control "public, max-age=31536000, immutable"
+		header @manifest Cache-Control "no-cache"
+		file_server
+	}
+
+	# Single-page app: unknown paths fall back to the shell, which must never be cached.
+	handle {
+		root * /srv/client
+		route {
+			try_files {path} /index.html
+			header / Cache-Control "no-cache"
+			header /index.html Cache-Control "no-cache"
+			file_server
+		}
+	}
+}

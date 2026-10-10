@@ -1,0 +1,31 @@
+# Dependencies and build output are recreated inside the image.
+node_modules
+**/node_modules
+**/dist
+**/dist-listener
+.turbo
+**/.turbo
+coverage
+**/coverage
+**/*.tsbuildinfo
+reports
+playwright-report
+test-results
+*.log
+
+# Version control and editor folders.
+.git
+.github
+.vscode
+.idea
+
+# Local secrets never enter an image.
+.env
+.env.*
+**/.env
+
+# Document files other than contributor READMEs.
+*.md
+**/*.md
+!README.md
+!**/README.md

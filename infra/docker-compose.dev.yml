@@ -1,0 +1,62 @@
+# Local development services. Runs without any .env file:
+#   docker compose -f infra/docker-compose.dev.yml up -d
+# The game server and client run on the host (`pnpm dev`) and reach these on localhost.
+# Toxiproxy sits in front of each service for latency, jitter and timeout experiments:
+#   postgres 15432 -> postgres:5432, redis 16379 -> redis:6379, game 12567 -> host:2567
+# and its control API listens on 8474.
+name: helyx-dev
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-helyx}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-helyx}
+      POSTGRES_DB: ${POSTGRES_DB:-helyx}
+    ports:
+      - '127.0.0.1:5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4-alpine
+    command: ['redis-server', '--appendonly', 'yes', '--appendfsync', 'everysec']
+    ports:
+      - '127.0.0.1:6379:6379'
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  toxiproxy:
+    image: ghcr.io/shopify/toxiproxy:2.12.0
+    command: ['-host=0.0.0.0', '-config=/config/toxiproxy.json']
+    ports:
+      - '127.0.0.1:8474:8474'
+      - '127.0.0.1:15432:15432'
+      - '127.0.0.1:16379:16379'
+      - '127.0.0.1:12567:12567'
+    volumes:
+      - ./toxiproxy.json:/config/toxiproxy.json:ro
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  redisdata:
