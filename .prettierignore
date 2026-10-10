@@ -1,0 +1,21 @@
+# lockfile
+pnpm-lock.yaml
+
+# dependencies and build output
+node_modules/
+dist/
+dist-listener/
+coverage/
+.turbo/
+*.tsbuildinfo
+
+# generated assets, content bundle and id unions
+apps/client/public/assets/
+apps/client/public/content/
+packages/content/dist/
+packages/content/src/generated/
+
+# reports
+reports/
+playwright-report/
+test-results/
