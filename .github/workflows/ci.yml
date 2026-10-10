@@ -60,6 +60,15 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: pnpm run --silent guard commits "$BASE_SHA..$HEAD_SHA"
 
+      # Pushes made straight to a branch get the same message checks, in case a hook was skipped.
+      - name: Pushed commit messages pass commitlint and the repository guard
+        if: github.event_name == 'push'
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+          BRANCH: ${{ github.ref_name }}
+        run: sh .github/scripts/check-pushed-commits.sh "$BEFORE_SHA" "$HEAD_SHA" "$BRANCH"
+
   typecheck:
     name: typecheck
     needs: lint
