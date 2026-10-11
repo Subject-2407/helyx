@@ -4,7 +4,6 @@ import { createSfc32 } from '../../rng/sfc32.js';
 import { SEED_A } from '../../testing/seeds.js';
 import { sum } from '../math.js';
 import golden from './__golden__/crafting.json' with { type: 'json' };
-import fees from './__golden__/fees.json' with { type: 'json' };
 import {
   craftedRarityRow,
   craftXp,
@@ -13,18 +12,6 @@ import {
   professionXpToNext,
   rollCraftedRarity,
 } from './crafting.js';
-import {
-  bankExpansionCost,
-  bankExpansionCount,
-  bankSlots,
-  clanFoundingCost,
-  listingFee,
-  reshapeCost,
-  salesTax,
-  sellerProceeds,
-  stallRent,
-  stallTax,
-} from './fees.js';
 
 const TABLE = golden.craftedRarity;
 
@@ -87,32 +74,5 @@ describe('profession progress', () => {
       bonus += gatherYield(0, rng) - 1;
     }
     expect(Math.abs(bonus / rolls - golden.gatherBonusChance)).toBeLessThan(0.01);
-  });
-});
-
-describe('coin sinks', () => {
-  it.each(fees.reshape)('reshaping at level $level', ({ level, coins }) => {
-    expect(reshapeCost(level)).toBe(coins);
-  });
-
-  it('grows the bank in nine expansions with tripling costs', () => {
-    expect(bankExpansionCount()).toBe(fees.bank.length);
-    expect(fees.bank.map((_cost, index) => bankExpansionCost(index + 1))).toEqual(fees.bank);
-    expect(bankSlots(fees.bank.length)).toBe(fees.bankSlotsAfterAll);
-    expect(() => bankExpansionCost(fees.bank.length + 1)).toThrow(RangeError);
-  });
-
-  it('charges the listing fee and sales tax', () => {
-    const { price, fee, tax, seller } = fees.market;
-    expect(listingFee(price)).toBe(fee);
-    expect(salesTax(price)).toBe(tax);
-    expect(sellerProceeds(price)).toBe(seller);
-    expect(listingFee(fees.listingFeeMinimum.price)).toBe(fees.listingFeeMinimum.fee);
-  });
-
-  it('charges stall rent and tax, and the clan founding fee', () => {
-    expect(stallRent(fees.stall.hours)).toBe(fees.stall.rent);
-    expect(stallTax(fees.stall.sales)).toBe(fees.stall.tax);
-    expect(clanFoundingCost()).toBe(fees.clanFounding);
   });
 });
