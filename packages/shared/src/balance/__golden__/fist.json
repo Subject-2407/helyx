@@ -1,0 +1,66 @@
+{
+  "bareAtk": [
+    {
+      "level": 1,
+      "atk": 8
+    },
+    {
+      "level": 8,
+      "atk": 36
+    },
+    {
+      "level": 15,
+      "atk": 64
+    }
+  ],
+  "referenceBuild": [
+    {
+      "level": 1,
+      "fistAtk": 18,
+      "swordAtk": 20,
+      "ratio": 0.9,
+      "speedRatio": 1.035
+    },
+    {
+      "level": 8,
+      "fistAtk": 74,
+      "swordAtk": 83,
+      "ratio": 0.892,
+      "speedRatio": 1.026
+    },
+    {
+      "level": 15,
+      "fistAtk": 130,
+      "swordAtk": 150,
+      "ratio": 0.867,
+      "speedRatio": 0.997
+    }
+  ],
+  "attackSpeed": [
+    {
+      "dex": 5,
+      "speed": 1.173
+    },
+    {
+      "dex": 100,
+      "speed": 1.5
+    }
+  ],
+  "dual": {
+    "main": 20,
+    "off": 20,
+    "atk": 30,
+    "hits": 4,
+    "singleHits": 3
+  },
+  "handsBonus": {
+    "def": 10,
+    "bonus": 5,
+    "override": 8
+  },
+  "reachPx": 24,
+  "poise": {
+    "sword": 10,
+    "fist": 13
+  }
+}

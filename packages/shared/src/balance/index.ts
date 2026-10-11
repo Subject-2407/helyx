@@ -5,6 +5,7 @@ export * from './damage.js';
 export * from './derived-stats.js';
 export * from './dissonance.js';
 export * from './encumbrance.js';
+export * from './fist.js';
 export * from './items.js';
 export * from './karma.js';
 export * from './kill-credit.js';
