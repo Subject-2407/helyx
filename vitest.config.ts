@@ -99,7 +99,15 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json-summary'],
       include: ['{apps,packages,tools}/*/src/**/*.{ts,tsx}'],
-      exclude: ['**/*.test.{ts,tsx}', '**/*.d.ts', '**/fixtures/**', '**/src/testing/**'],
+      exclude: [
+        '**/*.test.{ts,tsx}',
+        '**/*.d.ts',
+        '**/fixtures/**',
+        '**/src/testing/**',
+        // A thin process entry point: it only hands the arguments to the command runner, whose
+        // behavior is tested directly, and exits with its code.
+        'tools/repo-guard/src/cli.ts',
+      ],
       thresholds: COVERAGE_GATES,
     },
   },

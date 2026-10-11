@@ -40,6 +40,13 @@ describe('test runner configuration', () => {
     });
   });
 
+  it('leaves the guard command line entry point out of coverage', () => {
+    const coverage = config.test?.coverage;
+    const exclude = coverage && 'exclude' in coverage ? coverage.exclude : undefined;
+
+    expect(exclude).toContain('tools/repo-guard/src/cli.ts');
+  });
+
   it('never retries a failing test', () => {
     expect(config.test?.retry).toBe(0);
   });
