@@ -16,6 +16,11 @@ describe('zone resonance', () => {
     expect(resonanceAt(c).entropy).toBe(c.expected.entropy);
   });
 
+  it('holds each Aspect at the bottom of its range', () => {
+    const c = golden.belowTheFloor;
+    expect(resonanceAt(c).void).toBe(c.expected.void);
+  });
+
   it('applies only the highest priority of overlapping sub-zones', () => {
     const r = resonanceAt({ areaBase: {}, subzones: golden.overlap.subzones });
     expect(r.order).toBe(golden.overlap.expected.order);

@@ -67,6 +67,26 @@
       "entropy": 1
     }
   },
+  "belowTheFloor": {
+    "areaBase": {
+      "void": -0.7
+    },
+    "subzones": [
+      {
+        "name": "deep hollow",
+        "priority": 1,
+        "add": {
+          "void": -0.3
+        }
+      }
+    ],
+    "weatherAdd": {
+      "void": -0.2
+    },
+    "expected": {
+      "void": -1
+    }
+  },
   "overlap": {
     "subzones": [
       {
