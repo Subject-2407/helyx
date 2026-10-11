@@ -50,9 +50,12 @@ const RULES: readonly ForbiddenRule[] = [
     label: 'listener constant prefix',
     pattern: /\b(?:SYNC|SP|DIS|UNBOUND|RES|CALM|LISTEN|JARRED)_[A-Z0-9_]+/g,
   },
+  // The repository guard already rejects the remaining secret words in every public source file,
+  // and the shared package bundles nothing else, so they are not repeated here.
   {
     label: 'discovery or meter word',
-    pattern: /\b(?:folio|exile|circuit|dissonance|listener|attune\w*)\b/gi,
+    pattern:
+      /\b(?:folio|exile|circuit|dissonance|listener|listening|attune\w*|sync|unbound|thread)\b/gi,
   },
 ];
 
@@ -82,6 +85,34 @@ function describeHits(hits: readonly Hit[]): string {
 async function hitsFor(source: string): Promise<Hit[]> {
   return findHits(await bundleProbe(source));
 }
+
+/** One synthetic snippet per secret word, so a broken word pattern cannot pass unnoticed. */
+const SECRET_WORD_SAMPLES = [
+  'folio',
+  'Exile',
+  'circuit',
+  'dissonance',
+  'Listener',
+  'listening',
+  'attunement',
+  'sync',
+  'unbound',
+  'thread',
+] as const;
+
+describe('public shared bundle scan rules', () => {
+  it.each(SECRET_WORD_SAMPLES)('flags the word %s in a string literal', (word) => {
+    const hits = findHits(`const label = "${word}";`);
+
+    expect(hits.map((hit) => hit.rule)).toContain('discovery or meter word');
+  });
+
+  it('leaves names that only contain a secret word alone', () => {
+    const hits = findHits('const a = readFileSync; async function threaded() {}');
+
+    expect(hits, describeHits(hits)).toEqual([]);
+  });
+});
 
 describe('public shared bundle', () => {
   it('reads the names it scans for from the listener entry', () => {
