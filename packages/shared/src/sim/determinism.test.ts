@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { dashCostParam } from '../balance/movement.js';
 import { fnv1aBytes } from '../rng/hash.js';
 import { chance, pickUniform, randFloat, randInt } from '../rng/random.js';
@@ -16,6 +16,7 @@ import { moveParams, moveState, roomGrid } from '../testing/move-fixtures.js';
 const SEQUENCES = 10_000;
 const FRAMES = 30;
 const FIELDS = 11;
+const STATE_BYTES = FIELDS * 8;
 
 /** A walled room with a few pillars and a wall with a gap, so collisions happen often. */
 const GRID = roomGrid(24, 18, [
@@ -102,26 +103,84 @@ function serialize(state: MoveState, view: DataView, offset: number): void {
   values.forEach((value, index) => view.setFloat64(offset + index * 8, value, true));
 }
 
-function replay(sequences: readonly Sequence[]): Uint8Array {
-  const bytes = new Uint8Array(sequences.length * FIELDS * 8);
-  const view = new DataView(bytes.buffer);
+interface Replay {
+  /** The state after the last frame of each sequence, one sequence after another. */
+  readonly finals: Uint8Array;
+  /** The state after every frame, sequence by sequence and frame by frame. */
+  readonly frames: Uint8Array;
+  /** FNV-1a folded over every frame's state in that order. */
+  readonly frameHash: number;
+}
+
+function replay(sequences: readonly Sequence[]): Replay {
+  const finals = new Uint8Array(sequences.length * STATE_BYTES);
+  const frames = new Uint8Array(sequences.length * FRAMES * STATE_BYTES);
+  const finalView = new DataView(finals.buffer);
+  const frameView = new DataView(frames.buffer);
+  let frameOffset = 0;
   sequences.forEach((sequence, index) => {
     let state = sequence.start;
     for (const frame of sequence.frames) {
       state = stepMove(state, frame, sequence.params, GRID);
+      serialize(state, frameView, frameOffset);
+      frameOffset += STATE_BYTES;
     }
-    serialize(state, view, index * FIELDS * 8);
+    serialize(state, finalView, index * STATE_BYTES);
   });
-  return bytes;
+  return { finals, frames, frameHash: fnv1aBytes(frames) };
+}
+
+interface FrameMismatch {
+  readonly sequence: number;
+  readonly frame: number;
+}
+
+/** Where two per-frame streams first disagree, or null when they match byte for byte. */
+function firstMismatch(first: Uint8Array, second: Uint8Array): FrameMismatch | null {
+  const length = Math.max(first.length, second.length);
+  for (let index = 0; index < length; index += 1) {
+    if (first[index] !== second[index]) {
+      const step = Math.floor(index / STATE_BYTES);
+      return { sequence: Math.floor(step / FRAMES), frame: step % FRAMES };
+    }
+  }
+  return null;
 }
 
 describe('movement determinism', () => {
-  it('replays ten thousand input sequences to identical bytes and the recorded hash', () => {
+  let first: Replay;
+  let second: Replay;
+
+  beforeAll(() => {
     const sequences = makeSequences();
-    const first = replay(sequences);
-    const second = replay(sequences);
-    expect(second.length).toBe(first.length);
-    expect(first.findIndex((byte, index) => byte !== second[index])).toBe(-1);
-    expect(fnv1aBytes(first)).toBe(golden.fnv1a);
+    first = replay(sequences);
+    second = replay(sequences);
+  });
+
+  it('replays ten thousand input sequences to identical bytes and the recorded hash', () => {
+    expect(second.finals.length).toBe(first.finals.length);
+    expect(first.finals.findIndex((byte, index) => byte !== second.finals[index])).toBe(-1);
+    expect(fnv1aBytes(first.finals)).toBe(golden.fnv1a);
+  });
+
+  it('matches on every frame of every sequence and the recorded frame stream hash', () => {
+    expect(first.frames.length).toBe(SEQUENCES * FRAMES * STATE_BYTES);
+    expect(firstMismatch(first.frames, second.frames)).toBeNull();
+    expect(first.frameHash).toBe(golden.frameStreamFnv1a);
+    expect(second.frameHash).toBe(golden.frameStreamFnv1a);
+  });
+
+  it('names the sequence and frame of the first difference', () => {
+    const sequence = 1234;
+    const frame = 17;
+    const perturbed = first.frames.slice();
+    const byte = (sequence * FRAMES + frame) * STATE_BYTES + 3;
+    perturbed[byte] = (perturbed[byte] ?? 0) ^ 1;
+    expect(firstMismatch(first.frames, perturbed)).toEqual({ sequence, frame });
+    expect(firstMismatch(first.frames, first.frames.subarray(0, STATE_BYTES))).toEqual({
+      sequence: 0,
+      frame: 1,
+    });
+    expect(fnv1aBytes(perturbed)).not.toBe(first.frameHash);
   });
 });
