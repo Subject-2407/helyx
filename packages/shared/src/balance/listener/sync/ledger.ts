@@ -3,9 +3,8 @@
  * the share that passes to the next adventurer, and the tier of a value.
  */
 import { ASPECTS, type Aspect, type PartialAspectVector } from '../../../types/aspect.js';
-import type { SyncTier } from '../types.js';
 import { K_LISTENER } from '../constants.js';
-import { SYNC_TIER_TABLE } from '../tables.js';
+import { SYNC_TIER_TABLE, type SyncTier } from '../tables.js';
 import { assertNonNegative, assertWhole } from '../../guards.js';
 import { floorTo, sum } from '../../math.js';
 import { storeSync } from './growth.js';

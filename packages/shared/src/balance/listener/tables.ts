@@ -3,9 +3,14 @@
  * default row of the status that strain inflicts.
  */
 import type { StatusId } from '../../types/combat.js';
-import type { DissonanceState, SyncTier } from './types.js';
 import type { PublicStatusId, StatusRow } from '../tables/status.js';
 import { K_LISTENER } from './constants.js';
+
+/** Bands of the casting strain meter, from calm to its breaking point. */
+export type DissonanceState = 'calm' | 'strained' | 'distorted' | 'fraying' | 'unbound';
+
+/** Attunement bands of one Aspect. */
+export type SyncTier = 'novice' | 'adept' | 'attuned' | 'mastery';
 
 /** A band that starts at `min` (inclusive) and runs up to the next band's start. */
 export interface Band<Name extends string> {

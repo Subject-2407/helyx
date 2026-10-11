@@ -6,9 +6,8 @@
 import { pickUniform, chance } from '../../rng/random.js';
 import type { Rng } from '../../rng/rng.js';
 import { ASPECTS, type Aspect } from '../../types/aspect.js';
-import type { DissonanceState } from './types.js';
 import { K_LISTENER } from './constants.js';
-import { DISSONANCE_STATE_TABLE } from './tables.js';
+import { DISSONANCE_STATE_TABLE, type DissonanceState } from './tables.js';
 import { assertNonNegative } from '../guards.js';
 import { clamp, roundTo } from '../math.js';
 
