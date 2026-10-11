@@ -84,6 +84,18 @@ const LISTENER_PROTOCOL =
   '^packages/protocol/src/listener\\.ts$|(^|node_modules/)@helyx/protocol/src/listener\\.ts$';
 const SERVER_SRC = '^apps/server/src/';
 
+// The shared package's Listener-only entry point and the rule modules behind it, by path or by
+// package name (resolved, unresolved or via a symlink).
+const LISTENER_SHARED_FILES = '(listener(\\.ts)?$|balance/listener(/|$))';
+const LISTENER_SHARED_SRC = `^packages/shared/src/${LISTENER_SHARED_FILES}`;
+const LISTENER_SHARED = [
+  LISTENER_SHARED_SRC,
+  `(^|node_modules/)@helyx/shared/src/${LISTENER_SHARED_FILES}`,
+  '(^|node_modules/)@helyx/shared/listener$',
+];
+// Package code that ends up in the public client bundle.
+const PUBLIC_PACKAGE_SRC = '^packages/(shared|protocol|content)/src/';
+
 function workspaceRule(name) {
   const allowed = ALLOWED_WORKSPACE_IMPORTS[name];
   const ruleName =
@@ -208,6 +220,25 @@ const clientRules = [
   },
 ];
 
+const listenerRules = [
+  {
+    name: 'public-code-no-listener-shared',
+    comment:
+      'Listener-only constants and rules must never reach the public build. Public client code (the listener loader included), the public parts of the shared and protocol packages and the content package must not import them. The server, the database package and the tools never ship to the browser, and tests never ship at all, so they may.',
+    severity: 'error',
+    from: {
+      path: [CLIENT_SRC, PUBLIC_PACKAGE_SRC],
+      pathNot: [
+        LISTENER_ONLY,
+        LISTENER_SHARED_SRC,
+        '^packages/protocol/src/listener\\.ts$',
+        TEST_FILE,
+      ],
+    },
+    to: { path: LISTENER_SHARED },
+  },
+];
+
 const serverRules = [
   {
     name: 'server-no-browser-libraries',
@@ -253,6 +284,7 @@ module.exports = {
     ...workspaceRules,
     ...sharedRules,
     ...clientRules,
+    ...listenerRules,
     ...serverRules,
     ...structuralRules,
   ],
