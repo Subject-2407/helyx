@@ -5,9 +5,9 @@
 import type { EncumbranceTier } from '../types/combat.js';
 import { K } from './constants.js';
 import { encumbranceDashCostMult } from './encumbrance.js';
+import { MS_PER_S } from '../time/clock-constants.js';
 import { assertNonNegative } from './guards.js';
 
-const MS_PER_S = 1000;
 const HALF_TURN_DEG = 180;
 const FULL_TURN_DEG = 360;
 

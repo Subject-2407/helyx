@@ -6,6 +6,7 @@
  */
 import { dashSpeedPxS, staminaRegenPerS } from '../balance/movement.js';
 import { NET } from '../net-constants.js';
+import { MS_PER_S } from '../time/clock-constants.js';
 import { MoveFlag, type CollisionGrid } from '../types/movement.js';
 import { resolveX, resolveY } from './collision.js';
 import { canStartDash, isImmobilized, startDash } from './dash.js';
@@ -14,7 +15,7 @@ import { quantizePos, quantizeStamina } from './fixed.js';
 import type { FrameInput, MoveParams, MoveState } from './state.js';
 
 const DT = NET.SIM_DT;
-const DT_MS = 1000 * NET.SIM_DT;
+const DT_MS = MS_PER_S * NET.SIM_DT;
 const DASH_SPEED = dashSpeedPxS();
 
 /** Share of this frame a timer still covers, so a run that ends mid-frame moves only that far. */
