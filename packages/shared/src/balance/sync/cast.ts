@@ -35,6 +35,15 @@ export function effectiveSync(
   return total / tags.length;
 }
 
+/**
+ * Share of the force-mode Mana cost a caster pays at attunement `s`, for the public cost formula.
+ * A caster who is not a Listener brings 0 and pays the full cost.
+ */
+export function attunedManaFactor(s: number): number {
+  assertSync(s);
+  return 1 - (K.SYNC_MANA_RED * s) / K.SYNC_MAX;
+}
+
 /** Effect multiplier from attunement; it applies in both cast modes. */
 export function syncEffectBonus(s: number): number {
   assertSync(s);

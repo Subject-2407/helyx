@@ -1,67 +1,9 @@
 {
-  "ability": { "tags": ["change", "force"], "baseMana": 18, "baseDissonance": 30, "prof": 1 },
-  "rows": [
-    {
-      "name": "no attunement row",
-      "sync": { "change": 0, "force": 0 },
-      "s": 0,
-      "mana": 18,
-      "dissonance": null,
-      "power": null,
-      "effect": 1.0
-    },
-    {
-      "name": "ten row",
-      "sync": { "change": 10, "force": 10 },
-      "s": 10,
-      "mana": 17,
-      "dissonance": 25.8,
-      "power": { "neutral": 0.785, "friendly": 0.885, "hostile": 0.685 },
-      "effect": 1.015
-    },
-    {
-      "name": "forty row",
-      "sync": { "change": 40, "force": 40 },
-      "s": 40,
-      "mana": 15,
-      "dissonance": 14.6,
-      "power": { "neutral": 0.89, "friendly": 0.99, "hostile": 0.79 },
-      "effect": 1.06
-    },
-    {
-      "name": "uneven sixty one and seventy seven row",
-      "sync": { "change": 61, "force": 77 },
-      "s": 69,
-      "mana": 13,
-      "dissonance": 6.1,
-      "power": { "neutral": 0.9915, "friendly": 1.0915, "hostile": 0.8915 },
-      "effect": 1.1035
-    },
-    {
-      "name": "ninety two row",
-      "sync": { "change": 92, "force": 92 },
-      "s": 92,
-      "mana": 11,
-      "dissonance": 1.3,
-      "power": { "neutral": 1.072, "friendly": 1.172, "hostile": 0.972 },
-      "effect": 1.138
-    },
-    {
-      "name": "full attunement row",
-      "sync": { "change": 100, "force": 100 },
-      "s": 100,
-      "mana": 11,
-      "dissonance": 0.3,
-      "power": { "neutral": 1.1, "friendly": 1.2, "hostile": 1.0 },
-      "effect": 1.15
-    }
-  ],
-  "resonance": { "neutral": 0, "friendly": 0.5, "hostile": -0.5 },
+  "ability": { "baseMana": 18, "prof": 1 },
+  "fullCost": { "manaFactor": 1, "mana": 18 },
+  "halfCost": { "manaFactor": 0.5, "mana": 9 },
   "overcharge": { "mana": 27, "power": 1.25, "holdS": 0.35 },
-  "proficiencyTen": { "mana": 15, "dissonance": 24.6 },
-  "powerCeiling": 1.3,
-  "powerFloor": 0.55,
-  "windupPenaltyS": 0.1,
-  "interruptDissonance": 10,
-  "minSyncToCast": 5
+  "proficiencyTen": { "prof": 10, "mana": 15 },
+  "scaledPower": 0.9915,
+  "stamina": { "base": 20, "profOne": 20, "profTen": 16 }
 }

@@ -1,27 +1,36 @@
 /**
  * Casting an Aspect ability in the force mode, plus the power multiplier of a cast in any mode.
  *
- * The force mode spends Mana and works for everyone. Everything about the other mode lives in
- * its own modules, which this file never imports, so code that only casts in the force mode
- * can leave them out entirely. A caller that resolves the other mode passes its power in.
+ * The force mode spends Mana and works for everyone. Anything that changes its cost or power for
+ * some casters is worked out elsewhere and handed in as a plain factor, so this file reads only
+ * public numbers.
  */
 import type { CastMode } from '../types/combat.js';
 import { K } from './constants.js';
-import { assertInRange, assertNonNegative } from './guards.js';
+import { assertNonNegative } from './guards.js';
 import { profCostMult } from './proficiency.js';
 
-/** Whole Mana a force-mode cast costs at attunement `s`. Overcharge must already be allowed. */
+/** A mana factor is a share of the base cost: above 0 (a cast is never free) and at most 1. */
+function assertManaFactor(manaFactor: number): void {
+  if (!Number.isFinite(manaFactor) || manaFactor <= 0 || manaFactor > 1) {
+    throw new RangeError(`a mana factor must be above 0 and at most 1, got ${manaFactor}`);
+  }
+}
+
+/**
+ * Whole Mana a force-mode cast costs. `manaFactor` in (0, 1] scales the base cost for casters
+ * whose cost is reduced, and is 1 for everyone else. Overcharge must already be allowed.
+ */
 export function forceManaCost(
   baseMana: number,
-  s: number,
+  manaFactor: number,
   prof: number,
   overcharge: boolean,
 ): number {
   assertNonNegative(baseMana, 'a base cost');
-  assertInRange(s, 0, K.SYNC_MAX, 'attunement');
-  const attunement = 1 - (K.SYNC_MANA_RED * s) / K.SYNC_MAX;
+  assertManaFactor(manaFactor);
   const charge = overcharge ? K.OC_COST : 1;
-  return Math.round(baseMana * attunement * profCostMult(prof) * charge);
+  return Math.round(baseMana * manaFactor * profCostMult(prof) * charge);
 }
 
 /** Power multiplier of a force-mode cast. */
@@ -43,13 +52,13 @@ export function canOvercharge(request: OverchargeRequest): boolean {
 }
 
 /**
- * How a hit was cast, as far as its power multiplier is concerned. The other mode carries the
- * power its own module computed.
+ * How a hit was cast, as far as its power multiplier is concerned. A `scaled` cast carries a
+ * power multiplier that the caller has already worked out.
  */
 export type CastModeInput =
   | { readonly kind: 'physical' }
   | { readonly kind: 'force'; readonly overcharge: boolean }
-  | { readonly kind: 'sync'; readonly power: number };
+  | { readonly kind: 'scaled'; readonly power: number };
 
 /** Power multiplier of a cast in its mode; physical abilities are unaffected by cast mode. */
 export function castModeMult(mode: CastModeInput): number {
@@ -58,7 +67,7 @@ export function castModeMult(mode: CastModeInput): number {
       return 1;
     case 'force':
       return forcePower(mode.overcharge);
-    case 'sync':
+    case 'scaled':
       assertNonNegative(mode.power, 'cast power');
       return mode.power;
   }

@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { Aspect } from '../types/aspect.js';
-import casting from './__golden__/casting.json' with { type: 'json' };
-import golden from './__golden__/sync.json' with { type: 'json' };
-import { castModeMult, forceManaCost } from './casting.js';
+import golden from './__golden__/cast.json' with { type: 'json' };
+import syncGolden from './__golden__/sync.json' with { type: 'json' };
+import { canOvercharge, castModeMult, forceManaCost } from './casting.js';
 import {
+  attunedManaFactor,
   canSyncCast,
   effectiveSync,
   MIN_SYNC_TO_CAST,
@@ -15,13 +16,22 @@ import {
   syncWindupPenaltyS,
 } from './sync.js';
 
-const { ability, resonance } = casting;
+const { ability, resonance } = golden;
 const TAGS = ability.tags as readonly Aspect[];
 
+/** Mana a force-mode cast of the example ability costs at attunement `s`. */
+function manaAt(s: number, prof = ability.prof): number {
+  return forceManaCost(ability.baseMana, attunedManaFactor(s), prof, false);
+}
+
 describe('second cast mode worked example', () => {
-  describe.each(casting.rows)('$name', (row) => {
+  describe.each(golden.rows)('$name', (row) => {
     it('averages attunement over the tags', () => {
       expect(effectiveSync(row.sync, TAGS, true)).toBeCloseTo(row.s, 4);
+    });
+
+    it('charges the expected mana in the force mode', () => {
+      expect(manaAt(row.s)).toBe(row.mana);
     });
 
     it('gives the expected effect bonus', () => {
@@ -49,7 +59,8 @@ describe('second cast mode rules', () => {
     const hidden = { change: 61, force: 77 };
     const s = effectiveSync(hidden, TAGS, false);
     expect(s).toBe(0);
-    expect(forceManaCost(ability.baseMana, s, ability.prof, false)).toBe(18);
+    expect(attunedManaFactor(s)).toBe(1);
+    expect(manaAt(s)).toBe(golden.rows[0]?.mana);
     expect(syncEffectBonus(s)).toBe(1);
     expect(canSyncCast(hidden, TAGS, false)).toBe(false);
   });
@@ -60,38 +71,49 @@ describe('second cast mode rules', () => {
     expect(canSyncCast({ change: 40, force: 4.999 }, TAGS, true)).toBe(false);
     expect(canSyncCast({ change: 40, force: MIN_SYNC_TO_CAST }, TAGS, true)).toBe(true);
     expect(canSyncCast({ change: 40 }, [], true)).toBe(false);
-    expect(MIN_SYNC_TO_CAST).toBe(casting.minSyncToCast);
+    expect(MIN_SYNC_TO_CAST).toBe(golden.minSyncToCast);
   });
 
-  it('applies the proficiency cost reduction to strain', () => {
-    expect(syncDissonanceCost(ability.baseDissonance, 0, 10)).toBe(
-      casting.proficiencyTen.dissonance,
+  it('applies the proficiency cost reduction to mana and strain', () => {
+    expect(manaAt(0, golden.proficiencyTen.prof)).toBe(golden.proficiencyTen.mana);
+    expect(syncDissonanceCost(ability.baseDissonance, 0, golden.proficiencyTen.prof)).toBe(
+      golden.proficiencyTen.dissonance,
     );
   });
 
+  it('never overcharges in the second mode', () => {
+    expect(canOvercharge({ mode: 'sync', overchargeable: true, holdS: 1 })).toBe(false);
+  });
+
   it('clamps power at both ends', () => {
-    expect(syncPower(100, 1)).toBeCloseTo(casting.powerCeiling, 4);
-    expect(syncPower(0, -1)).toBeCloseTo(casting.powerFloor, 4);
+    expect(syncPower(100, 1)).toBeCloseTo(golden.powerCeiling, 4);
+    expect(syncPower(0, -1)).toBeCloseTo(golden.powerFloor, 4);
   });
 
   it('rejects attunement and resonance outside their ranges', () => {
     expect(() => syncEffectBonus(101)).toThrow(RangeError);
+    expect(() => attunedManaFactor(101)).toThrow(RangeError);
+    expect(() => attunedManaFactor(-1)).toThrow(RangeError);
     expect(() => syncPower(50, 1.5)).toThrow(RangeError);
     expect(() => syncDissonanceCost(-1, 0, 1)).toThrow(RangeError);
   });
 
   it('feeds its power into the cast mode multiplier', () => {
-    expect(castModeMult({ kind: 'sync', power: syncPower(69, 0) })).toBeCloseTo(0.9915, 4);
+    const power = syncPower(69, resonance.neutral);
+    expect(castModeMult({ kind: 'scaled', power })).toBeCloseTo(
+      golden.rows[3]?.power?.neutral ?? 0,
+      4,
+    );
   });
 
   it('exposes the wind-up and interrupt penalties', () => {
-    expect(syncWindupPenaltyS()).toBe(casting.windupPenaltyS);
-    expect(syncInterruptDissonance()).toBe(casting.interruptDissonance);
+    expect(syncWindupPenaltyS()).toBe(golden.windupPenaltyS);
+    expect(syncInterruptDissonance()).toBe(golden.interruptDissonance);
   });
 });
 
 describe('attunement growth multiplier', () => {
-  it.each(golden.growth)('$name', ({ int, wis, expected }) => {
+  it.each(syncGolden.growth)('$name', ({ int, wis, expected }) => {
     expect(syncGrowthMult(int, wis)).toBeCloseTo(expected, 4);
   });
 });
