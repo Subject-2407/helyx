@@ -26,6 +26,9 @@ export function encumbranceRatio(totalWeight: number, carryCapacity: number): nu
   return totalWeight / carryCapacity;
 }
 
+/** The band with no upper bound, which every ratio beyond the others falls into. */
+const HEAVIEST_BAND = ENCUMBRANCE_BANDS.at(-1);
+
 function bandFor(tier: EncumbranceTier): EncumbranceBand {
   const band = ENCUMBRANCE_BANDS[tier];
   if (band === undefined) throw new RangeError(`unknown encumbrance tier ${tier}`);
@@ -34,9 +37,9 @@ function bandFor(tier: EncumbranceTier): EncumbranceBand {
 
 export function encumbranceTier(ratio: number): EncumbranceTier {
   if (!(ratio >= 0)) throw new RangeError(`encumbrance ratio must not be negative, got ${ratio}`);
-  const band = ENCUMBRANCE_BANDS.find((b) => ratio <= b.maxRatio);
-  // The last band has no upper bound, so a finite or infinite ratio always finds one.
-  return (band ?? bandFor(3)).tier;
+  const band = ENCUMBRANCE_BANDS.find((b) => ratio <= b.maxRatio) ?? HEAVIEST_BAND;
+  if (band === undefined) throw new RangeError('the encumbrance band table is empty');
+  return band.tier;
 }
 
 /** Multiplier on move speed; 0 means the character cannot move but can still act. */
