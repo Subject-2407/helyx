@@ -144,13 +144,16 @@ CI.
 
 ## Working on `packages/shared`
 
-`@helyx/shared` holds the game rules that both the client and the server run. Everything is
-reachable from the package entry point, which re-exports one barrel per folder.
+`@helyx/shared` holds the game rules that both the client and the server run. The public rules
+are reachable from the package entry point, which re-exports the folder barrels; the test helpers
+have their own `@helyx/shared/testing` entry. A small set of rules, with their own
+tuning numbers, sits behind a separate entry point that public client code must not import; the
+lint rules and dependency-cruiser enforce that boundary.
 
 ```text
 packages/shared/src/
   balance/         balance formulas, one module per rule area, and the constants they use
-    constants.ts   K: every tuning number, as one flat frozen object (grouped in constants/)
+    constants.ts   K: the public tuning numbers, as one flat frozen object (grouped in constants/)
     tables/        rule tables (rows rather than single numbers), re-exported by constants.ts
     __golden__/    expected values for the golden tests, as JSON
   sim/             the deterministic fixed-step movement simulation shared by client and server
