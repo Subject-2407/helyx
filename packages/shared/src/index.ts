@@ -1,5 +1,6 @@
 export * from './balance/index.js';
 export * from './geometry/index.js';
+export * from './i18n/index.js';
 export * from './net-constants.js';
 export * from './rng/index.js';
 export * from './sim/index.js';
