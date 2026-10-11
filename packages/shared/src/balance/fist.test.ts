@@ -41,8 +41,8 @@ describe('fist weapon attack', () => {
       expect(total / swordAtk).toBeCloseTo(ratio, 3);
       const fistRate = total * fistAttackSpeed(REF_DEX);
       const swordRate = swordAtk * attackSpeed(REF_DEX);
-      // The published ratios carry three decimals, so compare at that display precision.
-      expect(fistRate / swordRate).toBeCloseTo(speedRatio, 2);
+      // The published ratios carry three decimals, so compare to within half of the last one.
+      expect(fistRate / swordRate).toBeCloseTo(speedRatio, 3);
     },
   );
 
