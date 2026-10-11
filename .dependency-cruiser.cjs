@@ -78,6 +78,10 @@ const CLIENT_SRC = '^apps/client/src/';
 const LISTENER = '^apps/client/src/listener/';
 // The small loader that fetches the Listener chunk at runtime ships in the public build.
 const LISTENER_LOADER = '^apps/client/src/listener/load\\.ts$';
+// Listener folder files that are not the public loader.
+const LISTENER_ONLY = '^apps/client/src/listener/(?!load\\.ts$)';
+const LISTENER_PROTOCOL =
+  '^packages/protocol/src/listener\\.ts$|(^|node_modules/)@helyx/protocol/src/listener\\.ts$';
 const SERVER_SRC = '^apps/server/src/';
 
 function workspaceRule(name) {
@@ -165,6 +169,14 @@ const clientRules = [
       path: ANY_WORKSPACE,
       pathNot: [LISTENER, workspacePattern('shared'), workspacePattern('protocol')],
     },
+  },
+  {
+    name: 'public-client-no-listener-protocol',
+    comment:
+      'Listener-only message codes and failure reasons must never reach the public build, so only Listener code may import that protocol entry point.',
+    severity: 'error',
+    from: { path: CLIENT_SRC, pathNot: [LISTENER_ONLY] },
+    to: { path: LISTENER_PROTOCOL },
   },
   {
     name: 'client-ui-no-phaser',

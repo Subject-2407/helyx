@@ -117,6 +117,8 @@ describe('module boundary rules', { timeout: CRUISE_TIMEOUT_MS }, () => {
         'client-scenes-no-react | apps/client/src/scenes/hud.ts',
         'client-scenes-reach-ui-only-through-bridge | apps/client/src/scenes/panel-peek.ts',
         'listener-imports-only-shared-protocol | apps/client/src/listener/leaky.ts',
+        'public-client-no-listener-protocol | apps/client/src/net/listener-codes.ts',
+        'public-client-no-listener-protocol | apps/client/src/listener/load.ts',
         'server-imports-only-shared-protocol-content-db | apps/server/src/bad-client.ts',
         'server-imports-only-shared-protocol-content-db | apps/server/src/uses-tool.ts',
         'server-no-browser-libraries | apps/server/src/render.ts',
