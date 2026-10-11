@@ -49,6 +49,7 @@ describe('test runner configuration', () => {
 
     expect(tooling.map((test) => nameOf(test))).toEqual(
       expect.arrayContaining([
+        `apps/client${TOOLING_SUFFIX}`,
         `packages/config${TOOLING_SUFFIX}`,
         `tools/repo-guard${TOOLING_SUFFIX}`,
       ]),

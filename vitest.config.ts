@@ -22,12 +22,13 @@ const TEST_INCLUDE = ['src/**/*.test.ts', 'test/**/*.test.ts'];
 const TEST_EXCLUDE = ['**/node_modules/**', '**/fixtures/**', 'e2e/**', 'dist/**'];
 
 /**
- * Suites that drive whole tools (type-aware ESLint, dependency-cruiser, git and its hooks) and
- * block their worker on child processes for many seconds. Run beside the fast suites they starve
- * for CPU, and a worker that stays blocked too long misses the runner's reporting deadline, which
- * fails the run even though every test passed. Paths are relative to each workspace folder.
+ * Suites that drive whole tools (type-aware ESLint, dependency-cruiser, git and its hooks, a full
+ * production bundler run) and block their worker for many seconds. Run beside the fast suites they
+ * starve for CPU, and a worker that stays blocked too long misses the runner's reporting deadline,
+ * which fails the run even though every test passed. Paths are relative to each workspace folder.
  */
 const TOOLING_SUITES: Readonly<Record<string, readonly string[]>> = {
+  'apps/client': ['test/public-bundle/**/*.test.ts'],
   'packages/config': ['test/eslint-rules.test.ts', 'test/depcruise/**/*.test.ts'],
   'tools/repo-guard': [
     'test/hooks.test.ts',
