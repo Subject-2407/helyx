@@ -37,7 +37,7 @@ describe('buttons', () => {
       'CONS3',
       'CONS4',
       'INTERACT',
-      'CAST_TOGGLE',
+      'MODE_TOGGLE',
       'HOSTILE_TOGGLE',
     ]);
   });

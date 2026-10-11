@@ -25,7 +25,8 @@ export const Btn = Object.freeze({
   CONS4: 1 << 10,
   /** Also the fishing timing press; while downed the server reads its held state. */
   INTERACT: 1 << 11,
-  CAST_TOGGLE: 1 << 12,
+  /** Switches the casting mode for players who have one; the server ignores it from anyone else. */
+  MODE_TOGGLE: 1 << 12,
   HOSTILE_TOGGLE: 1 << 13,
   /** Set while the player aims with the mouse instead of auto-aim. */
   AIM_MANUAL: 1 << 14,
@@ -39,7 +40,7 @@ export const EDGE_BITS =
   Btn.CONS3 |
   Btn.CONS4 |
   Btn.INTERACT |
-  Btn.CAST_TOGGLE |
+  Btn.MODE_TOGGLE |
   Btn.HOSTILE_TOGGLE;
 
 /** One 60 Hz input frame. */
