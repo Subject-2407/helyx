@@ -1,20 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import golden from './__golden__/constants.json' with { type: 'json' };
 import { isKKey, K } from './constants.js';
-import { ATTUNEMENT_K } from './constants/attunement.js';
 import { CHARACTER_K } from './constants/character.js';
 import { COMBAT_K } from './constants/combat.js';
 import { ITEMS_K } from './constants/items.js';
 import { REVIVAL_K } from './constants/revival.js';
 import { WORLD_K } from './constants/world.js';
 
-const GROUPS = { ATTUNEMENT_K, CHARACTER_K, COMBAT_K, ITEMS_K, REVIVAL_K, WORLD_K };
+const GROUPS = { CHARACTER_K, COMBAT_K, ITEMS_K, REVIVAL_K, WORLD_K };
 const KEY_PATTERN = /^[A-Z][A-Z0-9_]+$/;
+/** Prefixes of the keys kept in the separate table; none of them may be public. */
+const SEPARATE_KEY = /^(SYNC|SP|DIS|UNBOUND|RES|CALM|LISTEN|JARRED)_/;
 
-const goldenRows = Object.entries(golden);
+const publicRows = Object.entries(golden).filter(([key]) => !SEPARATE_KEY.test(key));
 
 describe('balance constants', () => {
-  it.each(goldenRows)('holds %s with its default', (key, value) => {
+  it.each(publicRows)('holds %s with its default', (key, value) => {
     expect(isKKey(key)).toBe(true);
     expect(K[key as keyof typeof K]).toBe(value);
   });
@@ -28,6 +29,10 @@ describe('balance constants', () => {
       expect(key).toMatch(KEY_PATTERN);
       expect(Number.isFinite(value), key).toBe(true);
     }
+  });
+
+  it('holds no key of the separate table', () => {
+    expect(Object.keys(K).filter((key) => SEPARATE_KEY.test(key))).toEqual([]);
   });
 
   it('never defines one key in two groups, so no value silently overrides another', () => {

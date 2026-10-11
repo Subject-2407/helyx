@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { SequenceRng } from '../rng/rng.js';
-import { createSfc32 } from '../rng/sfc32.js';
-import { SEED_A } from '../testing/seeds.js';
-import type { Aspect } from '../types/aspect.js';
+import { SequenceRng } from '../../rng/rng.js';
+import { createSfc32 } from '../../rng/sfc32.js';
+import { SEED_A } from '../../testing/seeds.js';
+import type { Aspect } from '../../types/aspect.js';
 import golden from './__golden__/dissonance.json' with { type: 'json' };
 import {
   addStrain,

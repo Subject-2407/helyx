@@ -35,7 +35,7 @@ export interface HitInput {
   readonly powers: AttackerPowers;
   /** Proficiency of the ability (1 for basic attacks). */
   readonly prof: number;
-  /** Attunement effect multiplier; ignored for untagged hits. */
+  /** Effect multiplier the caster brings to Aspect-tagged hits; ignored for untagged hits. */
   readonly effectBonus: number;
   /** Cast mode power multiplier (1 for physical hits). */
   readonly modeMult: number;
@@ -109,7 +109,7 @@ export function applyProficiency(raw: number, prof: number): number {
   return raw * profDamageMult(prof);
 }
 
-/** The attunement effect bonus only affects Aspect-tagged hits. */
+/** The effect bonus only affects Aspect-tagged hits. */
 export function applyEffectBonus(
   raw: number,
   effectBonus: number,
@@ -180,7 +180,7 @@ export interface TargetModsInput {
   readonly exposed?: boolean;
   /** The attacker carries `weaken`. */
   readonly weakened?: boolean;
-  /** Any further multipliers (guard, dissonance state, revival penalties). */
+  /** Any further multipliers the caller worked out (guard, states, revival penalties). */
   readonly extra?: readonly number[];
 }
 

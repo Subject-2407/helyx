@@ -4,7 +4,7 @@
  * by editing a switch.
  */
 import type { StatusId } from '../../types/combat.js';
-import { STATUS_TABLE, type StackingKind } from '../constants.js';
+import type { StackingKind, StatusRow } from '../constants.js';
 
 /** One status currently running on a target. Times are seconds on the room clock. */
 export interface ActiveStatus {
@@ -29,10 +29,14 @@ export interface StackingOutcome {
   readonly applied: boolean;
 }
 
-/** A stacking rule. `running` is the same status on the target if it has not run out yet. */
+/**
+ * A stacking rule. `running` is the same status on the target if it has not run out yet, and
+ * `row` holds the status's default numbers.
+ */
 export type StackingRule = (
   running: ActiveStatus | undefined,
   incoming: StatusApplication,
+  row: StatusRow,
 ) => StackingOutcome;
 
 function fresh(incoming: StatusApplication, stacks = 1): ActiveStatus {
@@ -44,17 +48,13 @@ function fresh(incoming: StatusApplication, stacks = 1): ActiveStatus {
   };
 }
 
-function maxStacksOf(name: StatusId): number {
-  return STATUS_TABLE[name].maxStacks ?? 1;
-}
-
 const refresh: StackingRule = (_running, incoming) => ({
   status: fresh(incoming),
   applied: true,
 });
 
-const stack: StackingRule = (running, incoming) => {
-  const stacks = Math.min(maxStacksOf(incoming.name), (running?.stacks ?? 0) + 1);
+const stack: StackingRule = (running, incoming, row) => {
+  const stacks = Math.min(row.maxStacks ?? 1, (running?.stacks ?? 0) + 1);
   return { status: fresh(incoming, stacks), applied: true };
 };
 
@@ -88,15 +88,16 @@ export const DEFAULT_STACKING_RULES: ReadonlyMap<StackingKind, StackingRule> = n
 ]);
 
 /**
- * Applies a status on top of what the target already carries. `current` may have run out; it
- * then counts as absent.
+ * Applies a status on top of what the target already carries. `row` is the incoming status's
+ * default row. `current` may have run out; it then counts as absent.
  */
 export function applyStatus(
   current: ActiveStatus | undefined,
   incoming: StatusApplication,
+  row: StatusRow,
   rules: ReadonlyMap<StackingKind, StackingRule> = DEFAULT_STACKING_RULES,
 ): StackingOutcome {
-  const kind = STATUS_TABLE[incoming.name].stacking;
+  const kind = row.stacking;
   const rule = rules.get(kind);
   if (rule === undefined) {
     throw new Error(`no stacking rule is registered for ${kind}`);
@@ -105,5 +106,5 @@ export function applyStatus(
     throw new Error(`cannot stack ${incoming.name} onto ${current.name}`);
   }
   const running = current !== undefined && current.untilS > incoming.nowS ? current : undefined;
-  return rule(running, incoming);
+  return rule(running, incoming, row);
 }

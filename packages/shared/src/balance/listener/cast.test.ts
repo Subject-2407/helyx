@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import type { Aspect } from '../types/aspect.js';
+import type { Aspect } from '../../types/aspect.js';
+import { canOvercharge, castModeMult, forceManaCost } from '../casting.js';
 import golden from './__golden__/cast.json' with { type: 'json' };
-import syncGolden from './__golden__/sync.json' with { type: 'json' };
-import { canOvercharge, castModeMult, forceManaCost } from './casting.js';
 import {
   attunedManaFactor,
   canSyncCast,
@@ -10,7 +9,6 @@ import {
   MIN_SYNC_TO_CAST,
   syncDissonanceCost,
   syncEffectBonus,
-  syncGrowthMult,
   syncInterruptDissonance,
   syncPower,
   syncWindupPenaltyS,
@@ -109,11 +107,5 @@ describe('second cast mode rules', () => {
   it('exposes the wind-up and interrupt penalties', () => {
     expect(syncWindupPenaltyS()).toBe(golden.windupPenaltyS);
     expect(syncInterruptDissonance()).toBe(golden.interruptDissonance);
-  });
-});
-
-describe('attunement growth multiplier', () => {
-  it.each(syncGolden.growth)('$name', ({ int, wis, expected }) => {
-    expect(syncGrowthMult(int, wis)).toBeCloseTo(expected, 4);
   });
 });

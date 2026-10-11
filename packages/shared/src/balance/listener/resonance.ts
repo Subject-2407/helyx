@@ -8,9 +8,9 @@ import {
   type Aspect,
   type AspectVector,
   type PartialAspectVector,
-} from '../types/aspect.js';
-import { K } from './constants.js';
-import { clamp, mean, roundTo } from './math.js';
+} from '../../types/aspect.js';
+import { K_LISTENER } from './constants.js';
+import { clamp, mean, roundTo } from '../math.js';
 
 /** A sub-zone the position lies in. Where several overlap, only the highest priority counts. */
 export interface ResonanceSubzone {
@@ -52,7 +52,10 @@ export function resonanceAt(sources: ResonanceSources): AspectVector {
     for (const layer of layers) {
       total += layer?.[aspect] ?? 0;
     }
-    out[aspect] = roundTo(clamp(total, K.RES_MIN, K.RES_MAX), K.RES_DECIMALS);
+    out[aspect] = roundTo(
+      clamp(total, K_LISTENER.RES_MIN, K_LISTENER.RES_MAX),
+      K_LISTENER.RES_DECIMALS,
+    );
   }
   return out as AspectVector;
 }

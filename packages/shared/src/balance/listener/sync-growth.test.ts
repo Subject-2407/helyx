@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { SequenceRng, U32_MAX } from '../rng/rng.js';
+import { SequenceRng, U32_MAX } from '../../rng/rng.js';
 import golden from './__golden__/sync.json' with { type: 'json' };
-import { floorTo } from './math.js';
+import { floorTo } from '../math.js';
 import {
   applySyncGain,
   calmReward,
@@ -22,6 +22,7 @@ import {
   syncCap,
   syncEcho,
   syncEchoVector,
+  syncGrowthMult,
   syncTier,
   syncUseGain,
   totalSync,
@@ -37,6 +38,12 @@ function climb(target: number, growthMult: number, store: (x: number) => number,
   }
   return { value, casts };
 }
+
+describe('attunement growth multiplier', () => {
+  it.each(golden.growth)('$name', ({ int, wis, expected }) => {
+    expect(syncGrowthMult(int, wis)).toBeCloseTo(expected, 4);
+  });
+});
 
 describe('use-based growth', () => {
   it('gains the expected amount and stores six decimals', () => {

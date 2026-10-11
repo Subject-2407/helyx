@@ -48,15 +48,7 @@
     { "name": "mending", "magnitude": 0, "durationS": 5, "stacking": "refresh", "resisted": 5 },
     { "name": "haste", "magnitude": 0.2, "durationS": 3, "stacking": "refresh", "resisted": 3 },
     { "name": "fortify", "magnitude": 0.2, "durationS": 4, "stacking": "refresh", "resisted": 4 },
-    { "name": "dispelled", "magnitude": 0, "durationS": 0, "stacking": "instant", "resisted": 0 },
-    {
-      "name": "jarred",
-      "magnitude": 3,
-      "durationS": 4,
-      "tickS": 1,
-      "stacking": "refresh",
-      "resisted": 3
-    }
+    { "name": "dispelled", "magnitude": 0, "durationS": 0, "stacking": "instant", "resisted": 0 }
   ],
   "knockbackPushS": 0.15,
   "burn": { "hit": 120, "tickDamage": 5, "ticks": 6, "resistedTicks": 4 },

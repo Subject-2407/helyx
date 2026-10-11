@@ -3,20 +3,21 @@
  * decays over time, and grows dangerous in bands until it breaks loose. Only Listeners ever
  * carry any; the server never applies it to anyone else.
  */
-import { pickUniform, chance } from '../rng/random.js';
-import type { Rng } from '../rng/rng.js';
-import { ASPECTS, type Aspect } from '../types/aspect.js';
-import type { DissonanceState } from '../types/combat.js';
-import { DISSONANCE_STATE_TABLE, K } from './constants.js';
-import { assertNonNegative } from './guards.js';
-import { clamp, roundTo } from './math.js';
+import { pickUniform, chance } from '../../rng/random.js';
+import type { Rng } from '../../rng/rng.js';
+import { ASPECTS, type Aspect } from '../../types/aspect.js';
+import type { DissonanceState } from '../../types/combat.js';
+import { K_LISTENER } from './constants.js';
+import { DISSONANCE_STATE_TABLE } from './tables.js';
+import { assertNonNegative } from '../guards.js';
+import { clamp, roundTo } from '../math.js';
 
 /** Keeps a value inside the meter, to one decimal. */
 export function clampDissonance(value: number): number {
   if (!Number.isFinite(value)) {
     throw new RangeError(`dissonance must be finite, got ${value}`);
   }
-  return roundTo(clamp(value, 0, K.DIS_MAX), K.DIS_DECIMALS);
+  return roundTo(clamp(value, 0, K_LISTENER.DIS_MAX), K_LISTENER.DIS_DECIMALS);
 }
 
 /** Adds (or, when negative, removes) strain; the meter never drops below 0. */
@@ -45,11 +46,11 @@ export interface DecayContext {
 /** Strain shed per second right now; nothing until the decay delay has passed. */
 export function dissonanceDecayPerS(ctx: DecayContext): number {
   assertNonNegative(ctx.sinceStrainS, 'time since the last strain');
-  if (ctx.sinceStrainS < K.DIS_DECAY_DELAY) {
+  if (ctx.sinceStrainS < K_LISTENER.DIS_DECAY_DELAY) {
     return 0;
   }
-  const base = K.DIS_DECAY_BASE + K.DIS_DECAY_WIS * ctx.wis;
-  const outOfCombat = ctx.inCombat ? 1 : K.DIS_OOC_DECAY_MULT;
+  const base = K_LISTENER.DIS_DECAY_BASE + K_LISTENER.DIS_DECAY_WIS * ctx.wis;
+  const outOfCombat = ctx.inCombat ? 1 : K_LISTENER.DIS_OOC_DECAY_MULT;
   return base * outOfCombat * (ctx.passiveMult ?? 1);
 }
 
@@ -61,7 +62,7 @@ export function decayDissonance(current: number, dtS: number, ctx: DecayContext)
 
 /** Extra damage taken from the distorted band upward. */
 export function dissonanceDamageTakenMult(value: number): number {
-  return value >= K.DIS_DISTORTED ? 1 + K.DIS_DMG_TAKEN : 1;
+  return value >= K_LISTENER.DIS_DISTORTED ? 1 + K_LISTENER.DIS_DMG_TAKEN : 1;
 }
 
 /**
@@ -70,7 +71,7 @@ export function dissonanceDamageTakenMult(value: number): number {
  * Below that band no random value is drawn.
  */
 export function misfireTags(value: number, tags: readonly Aspect[], rng: Rng): readonly Aspect[] {
-  if (value < K.DIS_FRAYING || !chance(rng, K.DIS_MISFIRE)) {
+  if (value < K_LISTENER.DIS_FRAYING || !chance(rng, K_LISTENER.DIS_MISFIRE)) {
     return tags;
   }
   return [pickUniform(rng, ASPECTS)];
@@ -87,9 +88,9 @@ export interface UnboundOutcome {
 export function unboundOutcome(maxHp: number): UnboundOutcome {
   assertNonNegative(maxHp, 'max health');
   return {
-    staggerS: K.UNBOUND_STAGGER,
-    hpLoss: Math.round(K.UNBOUND_HP * maxHp),
-    reset: K.UNBOUND_RESET,
+    staggerS: K_LISTENER.UNBOUND_STAGGER,
+    hpLoss: Math.round(K_LISTENER.UNBOUND_HP * maxHp),
+    reset: K_LISTENER.UNBOUND_RESET,
   };
 }
 
@@ -102,7 +103,7 @@ export interface StrainResult {
 /** Adds strain; reaching the top of the meter breaks loose and resets it. */
 export function addStrain(current: number, delta: number, maxHp: number): StrainResult {
   const value = applyDissonance(current, delta);
-  if (value >= K.DIS_MAX) {
+  if (value >= K_LISTENER.DIS_MAX) {
     const unbound = unboundOutcome(maxHp);
     return { value: unbound.reset, unbound };
   }

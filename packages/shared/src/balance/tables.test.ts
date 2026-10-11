@@ -9,7 +9,6 @@ import {
   ASPECT_BEATS,
   CC_DR_STEPS,
   CRYSTAL_UNITS,
-  DISSONANCE_STATE_TABLE,
   ENCHANT_GRADES,
   ENCUMBRANCE_BANDS,
   LEVEL_DIFF_XP_BANDS,
@@ -17,7 +16,6 @@ import {
   RARITY_TABLE,
   SHARD_TIERS,
   STATUS_TABLE,
-  SYNC_TIER_TABLE,
   UPGRADE_TABLE,
 } from './constants.js';
 
@@ -67,8 +65,10 @@ describe('rule tables', () => {
     expect(SHARD_TIERS.map((tier) => openBound(tier.maxIlvl))).toEqual([20, 40, 60, 80, null]);
   });
 
-  it('has a status row for every status effect', () => {
-    expect(Object.keys(STATUS_TABLE).sort()).toEqual([...STATUS_IDS].sort());
+  it('has a status row for every public status effect', () => {
+    const separate = new Set(['jarred']);
+    const publicIds = STATUS_IDS.filter((name) => !separate.has(name));
+    expect(Object.keys(STATUS_TABLE).sort()).toEqual([...publicIds].sort());
     expect(STATUS_TABLE.bleed.maxStacks).toBe(3);
   });
 
@@ -78,11 +78,6 @@ describe('rule tables', () => {
 
   it('gives default poise damage per basic hit kind', () => {
     expect(POISE_HIT_DAMAGE).toEqual({ basic: 10, dagger: 6, greatsword: 25, bow_charged: 20 });
-  });
-
-  it('starts the attunement and strain bands at their thresholds', () => {
-    expect(SYNC_TIER_TABLE.map((band) => band.min)).toEqual([0, 30, 60, 90]);
-    expect(DISSONANCE_STATE_TABLE.map((band) => band.min)).toEqual([0, 50, 70, 90, 100]);
   });
 
   it('turns the counter cycle through all six Aspects once', () => {

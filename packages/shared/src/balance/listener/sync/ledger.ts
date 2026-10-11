@@ -2,17 +2,21 @@
  * Changes to a character's attunement vector: gains under the total cap, release at a shrine,
  * the share that passes to the next adventurer, and the tier of a value.
  */
-import { ASPECTS, type Aspect, type PartialAspectVector } from '../../types/aspect.js';
-import type { SyncTier } from '../../types/combat.js';
-import { K, SYNC_TIER_TABLE } from '../constants.js';
-import { assertNonNegative, assertWhole } from '../guards.js';
-import { floorTo, sum } from '../math.js';
+import { ASPECTS, type Aspect, type PartialAspectVector } from '../../../types/aspect.js';
+import type { SyncTier } from '../../../types/combat.js';
+import { K_LISTENER } from '../constants.js';
+import { SYNC_TIER_TABLE } from '../tables.js';
+import { assertNonNegative, assertWhole } from '../../guards.js';
+import { floorTo, sum } from '../../math.js';
 import { storeSync } from './growth.js';
 
 /** Total attunement cap after the given number of passed Convergence Trials. */
 export function syncCap(convergenceTrials: number): number {
   assertWhole(convergenceTrials, 0, 'trial count');
-  return Math.min(K.SYNC_CAP_MAX, K.SYNC_CAP_START + K.SYNC_CAP_STEP * convergenceTrials);
+  return Math.min(
+    K_LISTENER.SYNC_CAP_MAX,
+    K_LISTENER.SYNC_CAP_START + K_LISTENER.SYNC_CAP_STEP * convergenceTrials,
+  );
 }
 
 /** Sum of attunement over every Aspect. */
@@ -40,7 +44,7 @@ export function applySyncGain(
 ): SyncGainResult {
   assertNonNegative(delta, 'a gain');
   const current = sync[aspect] ?? 0;
-  const room = Math.max(0, Math.min(cap - totalSync(sync), K.SYNC_MAX - current));
+  const room = Math.max(0, Math.min(cap - totalSync(sync), K_LISTENER.SYNC_MAX - current));
   const fitted = Math.min(delta, room);
   const value = storeSync(current + fitted);
   return {
@@ -67,7 +71,7 @@ export function releaseSync(
 /** The share of one Aspect's attunement that passes to the next adventurer; none for Outlaws. */
 export function syncEcho(old: number, wasOutlaw: boolean): number {
   assertNonNegative(old, 'attunement');
-  return wasOutlaw ? 0 : floorTo(K.SYNC_ECHO * old, K.SYNC_ECHO_DECIMALS);
+  return wasOutlaw ? 0 : floorTo(K_LISTENER.SYNC_ECHO * old, K_LISTENER.SYNC_ECHO_DECIMALS);
 }
 
 /** `syncEcho` for every Aspect of a vector. */

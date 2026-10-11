@@ -1,0 +1,13 @@
+{
+  "resist": 0.25,
+  "statuses": [
+    {
+      "name": "jarred",
+      "magnitude": 3,
+      "durationS": 4,
+      "tickS": 1,
+      "stacking": "refresh",
+      "resisted": 3
+    }
+  ]
+}

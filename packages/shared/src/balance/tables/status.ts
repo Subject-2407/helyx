@@ -14,8 +14,9 @@ export type StackingKind = 'refresh' | 'stack' | 'strongest' | 'no_refresh' | 'i
 export interface StatusRow {
   /**
    * Default strength. Its unit depends on the status: a fraction of the triggering hit for
-   * damage over time, a signed fraction of a stat for stat changes, units per second for
-   * `jarred`, and 0 where the strength comes from the ability data (`mending`, `knockback`).
+   * damage over time, a signed fraction of a stat for stat changes, an amount per tick for
+   * statuses that add to a meter, and 0 where the strength comes from the ability data
+   * (`mending`, `knockback`).
    */
   readonly magnitude: number;
   /** Default duration in seconds; 0 for instant effects. */
@@ -42,8 +43,14 @@ function lasting(
 
 const INSTANT: StatusRow = { magnitude: 0, durationS: 0, stacking: 'instant', harmful: true };
 
-/** Default numbers of every status effect; ability and monster data may override them. */
-export const STATUS_TABLE: Readonly<Record<StatusId, StatusRow>> = Object.freeze({
+/** Every status whose default numbers are public. */
+export type PublicStatusId = Exclude<StatusId, 'jarred'>;
+
+/**
+ * Default numbers of the public status effects; ability and monster data may override them. The
+ * remaining status has its row in a separate table, and the server merges both.
+ */
+export const STATUS_TABLE: Readonly<Record<PublicStatusId, StatusRow>> = Object.freeze({
   burn: { ...lasting(K.BURN_FRACTION, K.BURN_DURATION_S, 'refresh'), tickS: K.BURN_TICK_S },
   bleed: {
     ...lasting(K.BLEED_FRACTION, K.BLEED_DURATION_S, 'stack'),
@@ -64,7 +71,6 @@ export const STATUS_TABLE: Readonly<Record<StatusId, StatusRow>> = Object.freeze
   haste: lasting(K.HASTE_MOVE, K.HASTE_DURATION_S, 'refresh', false),
   fortify: lasting(K.FORTIFY_DEF, K.FORTIFY_DURATION_S, 'refresh', false),
   dispelled: INSTANT,
-  jarred: { ...lasting(K.JARRED_PER_S, K.JARRED_DURATION_S, 'refresh'), tickS: K.JARRED_TICK_S },
 });
 
 /** Duration multiplier of the first, second and third control effect inside one window. */

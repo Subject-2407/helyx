@@ -1,5 +1,10 @@
-/** Attunement growth, the second casting mode, its strain meter, resonance and first contact. */
-export const ATTUNEMENT_K = {
+/**
+ * Balance numbers that only Listener rules read: attunement growth, the second casting mode, its
+ * strain meter, resonance, first contact, and the status that strain inflicts. They live apart
+ * from the public table so that a build which never loads this entry point carries none of
+ * their names. Keys stay unique across both tables, so data can refer to either by key.
+ */
+export const K_LISTENER = Object.freeze({
   SYNC_MAX: 100,
   /** Decimals kept when attunement is stored. */
   SYNC_DECIMALS: 6,
@@ -69,4 +74,16 @@ export const ATTUNEMENT_K = {
   LISTEN_EDGE_CHANCE: 0.2,
   LISTEN_CIRCUIT_S: 2880,
   LISTEN_CIRCUIT_POINTS: 6,
-} as const;
+
+  /** The status a jarring hit leaves: strain per second, how long it lasts and its tick. */
+  JARRED_PER_S: 3,
+  JARRED_DURATION_S: 4,
+  JARRED_TICK_S: 1,
+} as const);
+
+export type KListenerKey = keyof typeof K_LISTENER;
+
+/** Whether `key` names a Listener balance constant, for data that refers to constants by key. */
+export function isListenerKKey(key: string): key is KListenerKey {
+  return Object.hasOwn(K_LISTENER, key);
+}
