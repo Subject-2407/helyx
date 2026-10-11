@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { CollisionCell } from '../types/movement.js';
 import { cellAt, collisionGridFromTiles, isMoveBlocked, resolveX, resolveY } from './collision.js';
-import { roomGrid } from './test-fixtures.js';
+import { roomGrid } from '../testing/move-fixtures.js';
 
 describe('collision grid from tiles', () => {
   it('stamps each quadrant of a tile from its mask bits', () => {

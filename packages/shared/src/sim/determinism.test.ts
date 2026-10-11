@@ -11,7 +11,7 @@ import golden from './__golden__/determinism.json' with { type: 'json' };
 import { quantizePos } from './fixed.js';
 import { stepMove } from './movement.js';
 import type { FrameInput, MoveParams, MoveState } from './state.js';
-import { moveParams, moveState, roomGrid } from './test-fixtures.js';
+import { moveParams, moveState, roomGrid } from '../testing/move-fixtures.js';
 
 const SEQUENCES = 10_000;
 const FRAMES = 30;

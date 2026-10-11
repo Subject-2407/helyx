@@ -1,6 +1,6 @@
 // Fixtures shared by the movement tests: a small walled room and default parameters.
 import { CollisionCell, type CollisionGrid } from '../types/movement.js';
-import type { MoveParams, MoveState } from './state.js';
+import type { MoveParams, MoveState } from '../sim/state.js';
 
 /** Builds a grid of `w8` × `h8` free cells with a solid border and the listed solid cells. */
 export function roomGrid(

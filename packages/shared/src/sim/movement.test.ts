@@ -3,7 +3,7 @@ import { MoveFlag, type Dir8 } from '../types/movement.js';
 import golden from './__golden__/scripts.json' with { type: 'json' };
 import { stepMove } from './movement.js';
 import type { FrameInput, MoveParams, MoveState } from './state.js';
-import { moveParams, moveState, roomGrid } from './test-fixtures.js';
+import { moveParams, moveState, roomGrid } from '../testing/move-fixtures.js';
 
 const GRID = roomGrid(20, 16);
 const DIAG_STEP = Math.round(((0.7071067811865476 * 81.2) / 60) * 64) / 64;
