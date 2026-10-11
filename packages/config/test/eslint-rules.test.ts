@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { ESLint, type Linter } from 'eslint';
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -10,24 +11,41 @@ const repoRoot = fileURLToPath(new URL('../../../', import.meta.url));
 const WARM_UP_TIMEOUT_MS = 120_000;
 const LINT_TIMEOUT_MS = 60_000;
 
-// The linted files are virtual: they never exist on disk, so no workspace tsconfig lists them.
+// Most linted files are virtual: they never exist on disk, so no workspace tsconfig lists them.
 // Letting the type-aware parser place exactly these paths in its default project keeps every
-// rule from the real config while avoiding writes into other workspaces.
-const VIRTUAL_FILES = [
+// rule from the real config while avoiding writes into other workspaces. A path that does exist
+// already belongs to its workspace project and is linted there, with the test's own text.
+const LINTED_FILES = [
   'packages/shared/src/x.ts',
+  'packages/shared/src/x.test.ts',
+  'packages/shared/src/balance/x.ts',
+  'packages/shared/src/balance/listener/x.ts',
+  'packages/protocol/src/x.ts',
+  'packages/protocol/src/x.test.ts',
+  'packages/protocol/src/listener.ts',
+  'packages/content/src/x.ts',
+  'packages/content/src/x.test.ts',
   'apps/server/src/x.ts',
   'apps/client/src/x.ts',
   'apps/client/src/ui/x.tsx',
   'apps/client/src/scenes/x.ts',
+  'apps/client/src/listener/load.ts',
   'apps/client/src/listener/panel/x.ts',
 ];
+
+const VIRTUAL_FILES = LINTED_FILES.filter((file) => !existsSync(`${repoRoot}${file}`));
 
 /** One linter for the repository config, shared by every test so its parser state is reused. */
 const eslint = new ESLint({
   cwd: repoRoot,
   overrideConfig: {
     languageOptions: {
-      parserOptions: { projectService: { allowDefaultProject: VIRTUAL_FILES } },
+      parserOptions: {
+        projectService: {
+          allowDefaultProject: VIRTUAL_FILES,
+          maximumDefaultProjectFileMatchCount_THIS_WILL_SLOW_DOWN_LINTING: VIRTUAL_FILES.length,
+        },
+      },
     },
   },
 });
@@ -45,7 +63,7 @@ async function lint(relativePath: string, code: string): Promise<Linter.LintMess
 }
 
 beforeAll(async () => {
-  for (const file of VIRTUAL_FILES) {
+  for (const file of LINTED_FILES) {
     await lint(file, 'export {};\n');
   }
 }, WARM_UP_TIMEOUT_MS);
@@ -121,6 +139,35 @@ const OTHER_LISTENER_IMPORTS = [
   '/loader',
   '/load/extra',
 ];
+
+/** Lints the imports and returns the line and severity of each restricted-import report. */
+async function restrictedLines(
+  file: string,
+  specifiers: readonly string[],
+): Promise<Array<[number, number]>> {
+  const messages = byRule(await lint(file, importLines(specifiers)), 'no-restricted-imports');
+  return messages.map((m) => [m.line, m.severity]);
+}
+
+/** The reports expected when every one of the given imports is forbidden. */
+function allForbidden(specifiers: readonly string[]): Array<[number, number]> {
+  return specifiers.map((_, index) => [index + 1, ERROR]);
+}
+
+const SHARED_LISTENER_ENTRY = '@helyx/shared/listener';
+
+/** Ways another package can reach the shared listener entry or the rules behind it. */
+const SHARED_LISTENER_FROM_PACKAGE = [
+  SHARED_LISTENER_ENTRY,
+  '@helyx/shared/src/listener',
+  '@helyx/shared/src/balance/listener/sync',
+  '../../shared/src/listener',
+  '../../shared/src/listener.js',
+  '../../shared/src/balance/listener',
+  '../../shared/src/balance/listener/sync',
+];
+
+const PUBLIC_SHARED_IMPORTS = ['@helyx/shared', '@helyx/shared/testing'];
 
 describe('lint rules', { timeout: LINT_TIMEOUT_MS }, () => {
   it('rejects Math.random and Date.now inside the pure shared package', async () => {
@@ -252,5 +299,97 @@ describe('lint rules', { timeout: LINT_TIMEOUT_MS }, () => {
     );
 
     expect(restricted).toEqual([]);
+  });
+
+  it('rejects the shared listener entry in public client code', async () => {
+    const specifiers = [
+      SHARED_LISTENER_ENTRY,
+      '@helyx/shared/src/balance/listener/sync',
+      '../../../packages/shared/src/listener',
+    ];
+    for (const { file } of PUBLIC_CLIENT_FILES) {
+      expect(await restrictedLines(file, specifiers), file).toEqual(allForbidden(specifiers));
+    }
+  });
+
+  it('rejects both listener entry points in the public listener loader', async () => {
+    const file = 'apps/client/src/listener/load.ts';
+    const specifiers = [
+      SHARED_LISTENER_ENTRY,
+      '@helyx/shared/src/balance/listener/sync',
+      '../../../../packages/shared/src/listener',
+      '../../../../packages/shared/src/balance/listener/sync',
+      '@helyx/protocol/listener',
+      '../../../../packages/protocol/src/listener',
+    ];
+
+    expect(await restrictedLines(file, specifiers)).toEqual(allForbidden(specifiers));
+    expect(await restrictedLines(file, ['@helyx/shared', '@helyx/protocol'])).toEqual([]);
+  });
+
+  it('lets listener-only client code import the shared listener entry', async () => {
+    const specifiers = [SHARED_LISTENER_ENTRY, '@helyx/protocol/listener'];
+
+    expect(await restrictedLines('apps/client/src/listener/panel/x.ts', specifiers)).toEqual([]);
+  });
+
+  it('rejects public shared code reaching the listener rules', async () => {
+    const fromRoot = [
+      './listener',
+      './listener.js',
+      './balance/listener',
+      './balance/listener/sync',
+      SHARED_LISTENER_ENTRY,
+    ];
+    const fromBalance = ['./listener', './listener/sync.js', '../listener', '../listener.ts'];
+
+    expect(await restrictedLines('packages/shared/src/x.ts', fromRoot)).toEqual(
+      allForbidden(fromRoot),
+    );
+    expect(await restrictedLines('packages/shared/src/balance/x.ts', fromBalance)).toEqual(
+      allForbidden(fromBalance),
+    );
+    const [report] = byRule(
+      await lint('packages/shared/src/x.ts', importLines(['./listener'])),
+      'no-restricted-imports',
+    );
+    expect(report?.message).toMatch(/public bundle/);
+  });
+
+  it('allows public shared code to import modules whose names only contain listener', async () => {
+    const specifiers = ['./event-listener', './listeners', './proficiency', '../rng/rng'];
+
+    expect(await restrictedLines('packages/shared/src/balance/x.ts', specifiers)).toEqual([]);
+  });
+
+  it('lets the shared listener rules import public shared modules', async () => {
+    const specifiers = ['../proficiency', '../../rng/rng', './sync', '../../listener'];
+
+    expect(await restrictedLines('packages/shared/src/balance/listener/x.ts', specifiers)).toEqual(
+      [],
+    );
+  });
+
+  it('rejects the shared listener entry in public protocol and content code', async () => {
+    for (const file of ['packages/protocol/src/x.ts', 'packages/content/src/x.ts']) {
+      expect(await restrictedLines(file, SHARED_LISTENER_FROM_PACKAGE), file).toEqual(
+        allForbidden(SHARED_LISTENER_FROM_PACKAGE),
+      );
+      expect(await restrictedLines(file, PUBLIC_SHARED_IMPORTS), file).toEqual([]);
+    }
+  });
+
+  it('lets the protocol listener entry, the server and tests import the shared listener entry', async () => {
+    const files = [
+      'packages/protocol/src/listener.ts',
+      'packages/protocol/src/x.test.ts',
+      'packages/content/src/x.test.ts',
+      'apps/server/src/x.ts',
+    ];
+    for (const file of files) {
+      expect(await restrictedLines(file, SHARED_LISTENER_FROM_PACKAGE), file).toEqual([]);
+    }
+    const fromSharedTest = ['./listener', './balance/listener/sync', SHARED_LISTENER_ENTRY];
+    expect(await restrictedLines('packages/shared/src/x.test.ts', fromSharedTest)).toEqual([]);
   });
 });

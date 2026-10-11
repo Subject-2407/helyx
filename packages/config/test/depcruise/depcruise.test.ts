@@ -80,6 +80,62 @@ describe('module boundary rules', { timeout: CRUISE_TIMEOUT_MS }, () => {
     ]);
   });
 
+  it('keeps the shared listener entry out of every public module', async () => {
+    const rule = 'public-code-no-listener-shared';
+    const entry = 'packages/shared/src/listener.ts';
+    const findings = await findingsFor('listener-shared');
+
+    expect(new Set(findings.map((f) => JSON.stringify(f)))).toEqual(
+      new Set(
+        [
+          { rule, from: 'apps/client/src/net/codes.ts', to: '@helyx/shared/listener' },
+          { rule, from: 'apps/client/src/state/meter.ts', to: entry },
+          { rule, from: 'apps/client/src/listener/load.ts', to: entry },
+          {
+            rule,
+            from: 'packages/shared/src/balance/leak.ts',
+            to: 'packages/shared/src/balance/listener/sync.ts',
+          },
+          { rule, from: 'packages/shared/src/peek.ts', to: entry },
+          { rule, from: 'packages/protocol/src/index.ts', to: entry },
+          {
+            rule,
+            from: 'packages/content/src/index.ts',
+            to: 'packages/shared/src/balance/listener/index.ts',
+          },
+        ].map((f) => JSON.stringify(f)),
+      ),
+    );
+  });
+
+  it('lets listener code, tests, the server, the database package and tools use the shared listener entry', async () => {
+    const result = await cruiseTree(`${fixturesDir}listener-shared`, ['.']);
+    const flagged = new Set(result.summary.violations.map((v) => v.from));
+    const allowed = [
+      'apps/client/src/listener/panel.ts',
+      'apps/client/src/state/meter.test.ts',
+      'packages/shared/src/listener.ts',
+      'packages/shared/src/balance/listener/index.ts',
+      'packages/shared/src/balance/listener/sync.ts',
+      'packages/shared/src/balance/sync.test.ts',
+      'packages/protocol/src/listener.ts',
+      'packages/db/src/index.ts',
+      'apps/server/src/main.ts',
+      'tools/content-cli/src/index.ts',
+    ];
+
+    for (const file of allowed) {
+      // Each allowed file really reaches the listener code, so the rule had something to judge.
+      const module = result.modules.find((m) => m.source === file);
+      const reaches = module?.dependencies.some(
+        (d) =>
+          !d.couldNotResolve && /^packages\/shared\/src\/(listener\.ts|balance\/)/.test(d.resolved),
+      );
+      expect(reaches, file).toBe(true);
+      expect(flagged.has(file), file).toBe(false);
+    }
+  });
+
   it('accepts a tree that only uses allowed imports', async () => {
     const result = await cruiseTree(`${fixturesDir}clean`, ['.']);
     expect(result.summary.violations).toEqual([]);
