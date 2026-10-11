@@ -90,6 +90,15 @@ describe('damage pipeline', () => {
     expect(finalizeDamage(value, false)).toBe(Math.round(value));
   });
 
+  it('can roll the crit without the variance', () => {
+    // A roll of the very top of the range would push variance to its maximum if it were used.
+    const rng = new SequenceRng([0, U32_MAX]);
+    const withoutVariance = computeHit(orderInput({ variance: false }), rng);
+    const reference = computeHit(orderInput(), CRIT_THEN_MID());
+    expect(withoutVariance.crit).toBe(true);
+    expect(withoutVariance.unrounded).toBeCloseTo(reference.unrounded, 4);
+  });
+
   it('does not round between steps', () => {
     const input = orderInput({
       damage: { base: 10.4, atk: 0, apw: 0 },

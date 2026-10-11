@@ -43,6 +43,8 @@ export interface HitInput {
   readonly critDamage: number;
   /** Damage-over-time ticks never crit. */
   readonly isDotTick?: boolean;
+  /** Set to false to keep the random source for the crit roll only. Defaults to true. */
+  readonly variance?: boolean;
   readonly attackerLevel: number;
   readonly attackerIsPlayer: boolean;
   readonly targetIsPlayer: boolean;
@@ -227,7 +229,7 @@ export function computeHit(input: HitInput, rng?: Rng): HitResult {
   );
   value = applyTargetMods(value, input.targetMods ?? 1);
   value = applyPvpScale(value, input.attackerIsPlayer, input.targetIsPlayer);
-  if (rng !== undefined) {
+  if (rng !== undefined && input.variance !== false) {
     value *= varianceFactor(rng);
   }
   return { damage: finalizeDamage(value, input.immune === true), crit, unrounded: value };

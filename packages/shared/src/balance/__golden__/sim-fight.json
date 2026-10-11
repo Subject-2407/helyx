@@ -1,0 +1,181 @@
+{
+  "patterns": {
+    "sword": {
+      "hits": [
+        {
+          "mult": 0.7,
+          "windup": 0.12,
+          "active": 0.08,
+          "recovery": 0.2
+        },
+        {
+          "mult": 0.7,
+          "windup": 0.12,
+          "active": 0.08,
+          "recovery": 0.2
+        },
+        {
+          "mult": 1.0,
+          "windup": 0.16,
+          "active": 0.1,
+          "recovery": 0.3
+        }
+      ]
+    },
+    "fistSingle": {
+      "hits": [
+        {
+          "mult": 0.52,
+          "windup": 0.1,
+          "active": 0.06,
+          "recovery": 0.16
+        },
+        {
+          "mult": 0.52,
+          "windup": 0.1,
+          "active": 0.06,
+          "recovery": 0.16
+        },
+        {
+          "mult": 0.66,
+          "windup": 0.12,
+          "active": 0.08,
+          "recovery": 0.24
+        }
+      ],
+      "speedFactor": 1.15
+    },
+    "fistDual": {
+      "hits": [
+        {
+          "mult": 0.34,
+          "windup": 0.08,
+          "active": 0.05,
+          "recovery": 0.13
+        },
+        {
+          "mult": 0.34,
+          "windup": 0.08,
+          "active": 0.05,
+          "recovery": 0.13
+        },
+        {
+          "mult": 0.34,
+          "windup": 0.08,
+          "active": 0.05,
+          "recovery": 0.13
+        },
+        {
+          "mult": 0.5,
+          "windup": 0.1,
+          "active": 0.06,
+          "recovery": 0.2
+        }
+      ],
+      "speedFactor": 1.15
+    }
+  },
+  "fights": [
+    {
+      "name": "sword",
+      "pattern": "sword",
+      "rows": [
+        {
+          "level": 1,
+          "atk": 20,
+          "hits": 3,
+          "ttkS": 1.36
+        },
+        {
+          "level": 8,
+          "atk": 83,
+          "hits": 7,
+          "ttkS": 3.12
+        },
+        {
+          "level": 15,
+          "atk": 150,
+          "hits": 8,
+          "ttkS": 3.52,
+          "perHit": [95, 95, 136]
+        }
+      ]
+    },
+    {
+      "name": "single fist",
+      "pattern": "fistSingle",
+      "rows": [
+        {
+          "level": 1,
+          "atk": 18,
+          "hits": 5,
+          "ttkS": 1.5
+        },
+        {
+          "level": 8,
+          "atk": 83,
+          "hits": 10,
+          "ttkS": 3.1
+        },
+        {
+          "level": 15,
+          "atk": 149,
+          "hits": 11,
+          "ttkS": 3.37,
+          "perHit": [70, 70, 89]
+        }
+      ]
+    },
+    {
+      "name": "dual fists",
+      "pattern": "fistDual",
+      "rows": [
+        {
+          "level": 1,
+          "atk": 24,
+          "hits": 6,
+          "ttkS": 1.44
+        },
+        {
+          "level": 8,
+          "atk": 104,
+          "hits": 12,
+          "ttkS": 2.97
+        },
+        {
+          "level": 15,
+          "atk": 187,
+          "hits": 12,
+          "ttkS": 2.97,
+          "perHit": [58, 58, 58, 85]
+        }
+      ]
+    }
+  ],
+  "dpsRatio": [
+    {
+      "level": 1,
+      "swordAtk": 20,
+      "singleAtk": 18,
+      "dualAtk": 24,
+      "single": 0.92,
+      "dual": 1.04
+    },
+    {
+      "level": 8,
+      "swordAtk": 83,
+      "singleAtk": 83,
+      "dualAtk": 104,
+      "single": 1.03,
+      "dual": 1.09
+    },
+    {
+      "level": 15,
+      "swordAtk": 150,
+      "singleAtk": 149,
+      "dualAtk": 187,
+      "single": 1.02,
+      "dual": 1.08
+    }
+  ]
+}
