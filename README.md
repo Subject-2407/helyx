@@ -142,6 +142,48 @@ CI.
   points) create infrastructure such as the database pool, Redis or the game engine. Extend
   behavior by registering a handler or adding data, not by editing a central `switch`.
 
+## Working on `packages/shared`
+
+`@helyx/shared` holds the game rules that both the client and the server run. Everything is
+reachable from the package entry point, which re-exports one barrel per folder.
+
+```text
+packages/shared/src/
+  balance/         balance formulas, one module per rule area, and the constants they use
+    constants.ts   K: every tuning number, as one flat frozen object (grouped in constants/)
+    tables/        rule tables (rows rather than single numbers), re-exported by constants.ts
+    __golden__/    expected values for the golden tests, as JSON
+  sim/             the deterministic fixed-step movement simulation shared by client and server
+  geometry/        hitbox shapes, overlap tests and line of sight on the collision grid
+  time/            the clock port, a fake clock for tests, and the in-game day and season clock
+  rng/             the random number port and the seeded sfc32 generator
+  types/           ids and enums shared with the protocol and the content schemas
+  i18n/            builders for string-table keys
+  net-constants.ts tick rates, input limits and other network numbers
+  testing/         contract suites and the constant test seeds (test code only)
+```
+
+**Changing a balance number.** Change the constant in `balance/constants/` (or the row in
+`balance/tables/`) and the matching expected value in the module's `__golden__/*.json` in the
+same commit. Gameplay code never repeats a number: it imports `K` or calls the formula. Content
+data that needs a tuning number refers to it by its key in `K`.
+
+**Golden tests.** Every formula module has a test file next to it that checks the worked values
+from its golden JSON. Integers must match exactly; fractional values are compared to four
+decimal places unless the test says otherwise. Tests take their randomness from `createSfc32`
+with the seeds exported by `@helyx/shared/testing`, so every failure replays the same way.
+
+**Purity rules.** Shared code has no dependencies, performs no I/O and never reads the time or
+an unseeded random source: the caller passes in a `Clock` or a timestamp and an `Rng`. The
+movement simulation goes further and must give byte-identical results on every engine: it uses
+only basic arithmetic, `Math.round`, `floor`, `min`, `max`, `abs` and `sign`, never `Math.sqrt`,
+`Math.pow` or trigonometry, and never depends on object key order. A determinism test replays
+thousands of seeded input sequences and compares the output with a stored hash.
+
+**Formulas are pure functions.** Add a rule as a function that takes plain data and returns
+plain data. Where a rule set will grow, register handlers in a map instead of extending a
+`switch`. Keep modules under 400 lines and functions under 60.
+
 ## Conventions
 
 - **TypeScript is strict** everywhere. Avoid `any`; when you truly need it, add an
