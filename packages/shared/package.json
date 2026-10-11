@@ -6,6 +6,7 @@
   "sideEffects": false,
   "exports": {
     ".": "./src/index.ts",
+    "./listener": "./src/listener.ts",
     "./testing": "./src/testing/index.ts"
   },
   "scripts": {
