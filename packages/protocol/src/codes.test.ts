@@ -44,7 +44,6 @@ describe('message codes', () => {
       Death: 22,
       ActionReject: 23,
       Kick: 24,
-      FirstListening: 25,
       Rescue: 26,
     });
   });

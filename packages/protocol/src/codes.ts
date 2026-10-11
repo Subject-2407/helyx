@@ -13,7 +13,12 @@ export enum C2S {
   Telemetry = 4,
 }
 
-/** Server → client message codes. */
+/**
+ * Server → client message codes every client handles. Some numbers in this range (25 so far)
+ * belong to messages that only part of the client handles. They live behind a separate entry
+ * point so their names never reach a bundle that does not need them: never give those numbers a
+ * member here.
+ */
 export enum S2C {
   Welcome = 1,
   Ack = 2,
@@ -39,7 +44,6 @@ export enum S2C {
   Death = 22,
   ActionReject = 23,
   Kick = 24,
-  FirstListening = 25,
   Rescue = 26,
 }
 

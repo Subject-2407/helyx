@@ -1,5 +1,7 @@
 // Machine-readable failure reasons sent in command results and action rejections. The client maps
-// each one to a translated message; the server never sends display text for them.
+// each one to a translated message; the server never sends display text for them. Every code here
+// ships in the public client, so a reason that only some players may learn about is not listed: the
+// server sends the neutral `not_available` instead.
 
 export type ErrorCode =
   | 'invalid'
@@ -17,7 +19,6 @@ export type ErrorCode =
   | 'requirements_not_met'
   | 'level_too_low'
   | 'stat_too_low'
-  | 'sync_too_low'
   | 'weapon_mismatch'
   | 'insufficient_coins'
   | 'insufficient_items'
@@ -49,9 +50,7 @@ export type ErrorCode =
   | 'socket_full'
   | 'trait_locked'
   | 'already_known'
-  | 'sync_cap'
   | 'daily_done'
-  | 'not_attuned'
   | 'gm_only'
   | 'downed'
   | 'fallen'
@@ -67,7 +66,8 @@ export type ErrorCode =
   | 'illegal_offhand'
   | 'two_handed_lock'
   | 'wrong_slot'
-  | 'character_exists';
+  | 'character_exists'
+  | 'not_available';
 
 /** Every `ErrorCode`, in declaration order. A test keeps this list and the union identical. */
 export const ERROR_CODES = Object.freeze([
@@ -86,7 +86,6 @@ export const ERROR_CODES = Object.freeze([
   'requirements_not_met',
   'level_too_low',
   'stat_too_low',
-  'sync_too_low',
   'weapon_mismatch',
   'insufficient_coins',
   'insufficient_items',
@@ -118,9 +117,7 @@ export const ERROR_CODES = Object.freeze([
   'socket_full',
   'trait_locked',
   'already_known',
-  'sync_cap',
   'daily_done',
-  'not_attuned',
   'gm_only',
   'downed',
   'fallen',
@@ -137,6 +134,7 @@ export const ERROR_CODES = Object.freeze([
   'two_handed_lock',
   'wrong_slot',
   'character_exists',
+  'not_available',
 ] as const satisfies readonly ErrorCode[]);
 
 const ERROR_CODE_SET: ReadonlySet<string> = new Set(ERROR_CODES);

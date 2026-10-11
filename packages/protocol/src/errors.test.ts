@@ -21,7 +21,6 @@ const EVERY_ERROR_CODE: Record<ErrorCode, true> = {
   requirements_not_met: true,
   level_too_low: true,
   stat_too_low: true,
-  sync_too_low: true,
   weapon_mismatch: true,
   insufficient_coins: true,
   insufficient_items: true,
@@ -53,9 +52,7 @@ const EVERY_ERROR_CODE: Record<ErrorCode, true> = {
   socket_full: true,
   trait_locked: true,
   already_known: true,
-  sync_cap: true,
   daily_done: true,
-  not_attuned: true,
   gm_only: true,
   downed: true,
   fallen: true,
@@ -72,6 +69,7 @@ const EVERY_ERROR_CODE: Record<ErrorCode, true> = {
   two_handed_lock: true,
   wrong_slot: true,
   character_exists: true,
+  not_available: true,
 };
 
 describe('error codes', () => {
