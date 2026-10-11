@@ -80,7 +80,7 @@ describe('second cast mode rules', () => {
   });
 
   it('never overcharges in the second mode', () => {
-    expect(canOvercharge({ mode: 'sync', overchargeable: true, holdS: 1 })).toBe(false);
+    expect(canOvercharge({ mode: 'scaled', overchargeable: true, holdS: 1 })).toBe(false);
   });
 
   it('clamps power at both ends', () => {

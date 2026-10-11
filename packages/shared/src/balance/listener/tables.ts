@@ -2,7 +2,8 @@
  * Rule tables that only Listener rules read: the attunement tiers, the strain bands and the
  * default row of the status that strain inflicts.
  */
-import type { DissonanceState, StatusId, SyncTier } from '../../types/combat.js';
+import type { StatusId } from '../../types/combat.js';
+import type { DissonanceState, SyncTier } from './types.js';
 import type { PublicStatusId, StatusRow } from '../tables/status.js';
 import { K_LISTENER } from './constants.js';
 

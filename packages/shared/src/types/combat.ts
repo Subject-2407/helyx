@@ -33,14 +33,11 @@ export const STATUS_IDS = Object.freeze([
 
 export type StatusId = (typeof STATUS_IDS)[number];
 
-/** How an Aspect ability is cast. */
-export type CastMode = 'force' | 'sync';
-
-/** Bands of the casting strain meter, from calm to its breaking point. */
-export type DissonanceState = 'calm' | 'strained' | 'distorted' | 'fraying' | 'unbound';
-
-/** Attunement bands of one Aspect. */
-export type SyncTier = 'novice' | 'adept' | 'attuned' | 'mastery';
+/**
+ * How an Aspect ability is cast: `force` spends Mana the usual way, and `scaled` is any other mode
+ * whose cost and power are worked out elsewhere and handed in as plain factors.
+ */
+export type CastMode = 'force' | 'scaled';
 
 /** Load bands: 0 normal, 1 burdened, 2 heavily burdened, 3 overloaded. */
 export type EncumbranceTier = 0 | 1 | 2 | 3;
