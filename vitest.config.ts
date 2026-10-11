@@ -42,11 +42,13 @@ const TOOLING_SUITES: Readonly<Record<string, readonly string[]>> = {
 const TOOLING_PROJECT_SUFFIX = ' (tooling)';
 
 /**
- * Fast suites run first, all in parallel. Tooling suites wait until they finish, then run one
- * file at a time in a single child process, so nothing competes with them for the machine.
+ * Fast suites run first, all in parallel. Tooling suites wait until they finish. Each workspace's
+ * tooling project then gets a group of its own, so the projects run one after another, and inside
+ * a project one file runs at a time in a single child process. Projects that share a group run at
+ * the same time, so giving them one group would put the heavy tools back in competition.
  */
 const FAST_GROUP = 0;
-const TOOLING_GROUP = 1;
+const FIRST_TOOLING_GROUP = 1;
 
 function fastProject(dir: string): TestProjectInlineConfiguration {
   return {
@@ -61,7 +63,11 @@ function fastProject(dir: string): TestProjectInlineConfiguration {
   };
 }
 
-function toolingProject(dir: string, suites: readonly string[]): TestProjectInlineConfiguration {
+function toolingProject(
+  dir: string,
+  suites: readonly string[],
+  groupOrder: number,
+): TestProjectInlineConfiguration {
   return {
     extends: true,
     test: {
@@ -71,15 +77,21 @@ function toolingProject(dir: string, suites: readonly string[]): TestProjectInli
       exclude: TEST_EXCLUDE,
       pool: 'forks',
       poolOptions: { forks: { singleFork: true } },
-      sequence: { groupOrder: TOOLING_GROUP },
+      sequence: { groupOrder },
     },
   };
 }
 
 function testProjects(): TestProjectInlineConfiguration[] {
+  let nextToolingGroup = FIRST_TOOLING_GROUP;
   return workspaceDirs().flatMap((dir) => {
     const suites = TOOLING_SUITES[dir];
-    return suites ? [fastProject(dir), toolingProject(dir, suites)] : [fastProject(dir)];
+    if (suites === undefined) {
+      return [fastProject(dir)];
+    }
+    const groupOrder = nextToolingGroup;
+    nextToolingGroup += 1;
+    return [fastProject(dir), toolingProject(dir, suites, groupOrder)];
   });
 }
 

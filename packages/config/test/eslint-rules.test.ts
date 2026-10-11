@@ -7,8 +7,9 @@ import { SOLID_THRESHOLDS } from '../src/eslint/thresholds.js';
 const repoRoot = fileURLToPath(new URL('../../../', import.meta.url));
 
 // Type-aware linting builds a TypeScript program the first time it sees each file, which takes
-// a few seconds. That cost is paid once, up front, so each test only lints warm files.
-const WARM_UP_TIMEOUT_MS = 120_000;
+// a few seconds. That cost is paid once, up front, so each test only lints warm files. On a busy
+// machine the first program build alone can take minutes, so the warm-up gets a generous limit.
+const WARM_UP_TIMEOUT_MS = 240_000;
 const LINT_TIMEOUT_MS = 60_000;
 
 // Most linted files are virtual: they never exist on disk, so no workspace tsconfig lists them.

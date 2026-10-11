@@ -68,6 +68,15 @@ describe('test runner configuration', () => {
     }
   });
 
+  it('never lets two tooling projects run at the same time', () => {
+    // Projects that share a group order run side by side, so each tooling project needs its own.
+    const groups = projectTests()
+      .filter(isTooling)
+      .map((test) => test.sequence?.groupOrder);
+
+    expect(new Set(groups).size).toBe(groups.length);
+  });
+
   it('keeps every other project parallel and ahead of the tooling suites', () => {
     const fast = projectTests().filter((test) => !isTooling(test));
 
